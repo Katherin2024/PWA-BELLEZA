@@ -1,10 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+  <!-- Configuración de caracteres -->
   <meta charset="UTF-8">
+
+  <!-- Adaptación a dispositivos móviles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Título de la aplicación -->
   <title>PWA Belleza</title>
+
+  <!-- Configuración PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Color del tema (barra del navegador) -->
+  <meta name="theme-color" content="#f8e8ff">
 </head>
+
 <body>
+
+  <!-- Título principal -->
   <h1>Bienvenida a tu App de Belleza 💅</h1>
+
+  <!-- ================= FIREBASE ================= -->
+  <script type="module">
+
+    // Importar funciones necesarias desde Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
+
+    // Configuración de Firebase (TU PROYECTO)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7Q6Kvn0klC_OIByWIWe4-o7NiJ1D0SLQ",
+      authDomain: "pwabelleza.firebaseapp.com",
+      projectId: "pwabelleza",
+      storageBucket: "pwabelleza.firebasestorage.app",
+      messagingSenderId: "36813965033",
+      appId: "1:36813965033:web:9b760c75eade1e2b079278",
+      measurementId: "G-T8YZD0F5T0"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Inicializar Analytics (opcional)
+    const analytics = getAnalytics(app);
+
+    // Mensaje en consola para verificar conexión
+    console.log("Firebase conectado correctamente");
+
+  </script>
+
+  <!-- ================= SERVICE WORKER ================= -->
+  <script>
+    // Verificar si el navegador soporta Service Worker
+    if ('serviceWorker' in navigator) {
+
+      // Registrar el service worker
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log("Service Worker registrado"))
+        .catch(error => console.log("Error:", error));
+
+    }
+  </script>
+
 </body>
 </html>
