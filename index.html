@@ -1,68 +1,76 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <!-- Configuración de caracteres -->
+
   <meta charset="UTF-8">
-
-  <!-- Adaptación a dispositivos móviles -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Título de la aplicación -->
   <title>PWA Belleza</title>
 
-  <!-- Configuración PWA -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
 
-  <!-- Color del tema (barra del navegador) -->
-  <meta name="theme-color" content="#f8e8ff">
 </head>
 
 <body>
 
-  <!-- Título principal -->
-  <h1>Bienvenida a tu App de Belleza 💅</h1>
+  <!-- ================= HEADER ================= -->
+  <header class="header">
 
-  <!-- ================= FIREBASE ================= -->
+    <!-- Logo -->
+    <div class="logo">
+      💅 <span>PWA Belleza</span>
+    </div>
+
+    <!-- Menú -->
+    <nav class="menu">
+
+      <a href="servicios.html">Servicios</a>
+      <a href="mis-citas.html" class="btn-outline">Mis citas</a>      
+      <!-- Login -->
+      <button id="btnLogin" class="btn-outline" onclick="irLogin()">Login</button>
+
+      <!-- Logout -->
+      <button id="btnLogout" class="btn-solid" onclick="cerrarSesion()">Cerrar Sesion</button>
+
+    </nav>
+
+  </header>
+
+  <!-- Saludo -->
+  <h2 id="saludo" class="saludo"></h2>
+
+  <!-- ================= SCRIPT ================= -->
   <script type="module">
 
-    // Importar funciones necesarias desde Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
+    import { getAuth, onAuthStateChanged, signOut } 
+    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-    // Configuración de Firebase (TU PROYECTO)
-    const firebaseConfig = {
-      apiKey: "AIzaSyC7Q6Kvn0klC_OIByWIWe4-o7NiJ1D0SLQ",
-      authDomain: "pwabelleza.firebaseapp.com",
-      projectId: "pwabelleza",
-      storageBucket: "pwabelleza.firebasestorage.app",
-      messagingSenderId: "36813965033",
-      appId: "1:36813965033:web:9b760c75eade1e2b079278",
-      measurementId: "G-T8YZD0F5T0"
+    import { app } from "./js/firebase-config.js";
+
+    const auth = getAuth(app);
+
+    // Mostrar botones dinámicos
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+        document.getElementById("btnLogin").style.display = "none";
+        document.getElementById("btnLogout").style.display = "inline-block";
+        document.getElementById("saludo").innerText = "Bienvenid@ 💖";
+      } else {
+        document.getElementById("btnLogin").style.display = "inline-block";
+        document.getElementById("btnLogout").style.display = "none";
+        document.getElementById("saludo").innerText = "Explora nuestros servicios 💅";
+      }
+
+    });
+
+    window.irLogin = () => {
+      window.location.href = "login.html";
     };
 
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
+    window.cerrarSesion = () => {
+      signOut(auth).then(() => location.reload());
+    };
 
-    // Inicializar Analytics (opcional)
-    const analytics = getAnalytics(app);
-
-    // Mensaje en consola para verificar conexión
-    console.log("Firebase conectado correctamente");
-
-  </script>
-
-  <!-- ================= SERVICE WORKER ================= -->
-  <script>
-    // Verificar si el navegador soporta Service Worker
-    if ('serviceWorker' in navigator) {
-
-      // Registrar el service worker
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log("Service Worker registrado"))
-        .catch(error => console.log("Error:", error));
-
-    }
   </script>
 
 </body>

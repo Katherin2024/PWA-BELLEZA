@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<title>Mis citas</title>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<!-- BOTÓN VOLVER -->
+<button class="btn-volver-float" onclick="volver()">⬅</button>
+
+<h2 class="titulo">Mis citas 💖</h2>
+
+<div id="listaCitas"></div>
+
+<script type="module">
+
+import { 
+  getFirestore, 
+  collection, 
+  getDocs,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+import { 
+  getAuth,
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+import { app } from "./js/firebase-config.js";
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ================= CARGAR CITAS =================
+async function cargarCitas(user){
+
+  const contenedor = document.getElementById("listaCitas");
+  const querySnapshot = await getDocs(collection(db, "citas"));
+
+  let html = "";
+
+  querySnapshot.forEach((docSnap) => {
+
+    const cita = docSnap.data();
+    const id = docSnap.id;
+
+    if(cita.usuario === user.email){
+
+      html += `
+        <div class="cita">
+          <h3>${cita.servicio}</h3>
+          <p>📅 ${cita.fecha}</p>
+          <p>⏰ ${cita.hora}</p>
+          <p>📍 ${cita.direccion}</p>
+
+          <button onclick="cancelarCita('${id}')">
+            Cancelar ❌
+          </button>
+        </div>
+      `;
+    }
+
+  });
+
+  if(html === ""){
+    html = `<p style="text-align:center;">No tienes citas 💔</p>`;
+  }
+
+  contenedor.innerHTML = html;
+
+}
+
+// ================= AUTH =================
+onAuthStateChanged(auth, (user) => {
+
+  if(!user){
+    alert("Debes iniciar sesión ⚠️");
+    window.location.href = "login.html";
+    return;
+  }
+
+  cargarCitas(user);
+
+});
+
+// ================= CANCELAR =================
+window.cancelarCita = async (id) => {
+
+  const confirmar = confirm("¿Cancelar esta cita? ❌");
+
+  if(!confirmar) return;
+
+  try {
+
+    await deleteDoc(doc(db, "citas", id));
+
+    alert("Cita cancelada 💔");
+
+    // Recargar lista
+    location.reload();
+
+  } catch (error) {
+
+    alert("Error: " + error.message);
+
+  }
+
+};
+
+// ================= VOLVER =================
+window.volver = () => {
+  window.location.href = "index.html";
+};
+
+</script>
+
+</body>
+</html>

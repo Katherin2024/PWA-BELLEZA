@@ -1,21 +1,8 @@
 {
-  "name": "PWA Belleza a Domicilio", 
-  "short_name": "Belleza", 
-
-  "start_url": "./index.html", 
-
-  "display": "standalone", 
-
-  "background_color": "#ffffff", 
-  "theme_color": "#f8e8ff", 
-
-  "orientation": "portrait", 
-
-  "icons": [
-    {
-      "src": "img/icono.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
+  "name": "PWA Belleza",
+  "short_name": "Belleza",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f8e8ff"
 }

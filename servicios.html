@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Servicios</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo">💅 Belleza</div>
+  <nav class="menu">
+    <a href="index.html">Inicio</a>
+  </nav>
+</header>
+
+<h1 class="titulo">Servicios 💖</h1>
+
+<div class="contenedor-categorias">
+
+  <div class="card">
+    <img src="img/unas.jpg">
+    <h3>Tratamientos De Manos y Pies</h3>
+    <button onclick="irCategoria('uñas')">Ver todos</button>
+  </div>
+
+  <div class="card">
+    <img src="img/depilacion.jpg">
+    <h3>Depilación Facial y Corporal</h3>
+    <button onclick="irCategoria('depilacion')">Ver todos</button>
+  </div>
+
+  <div class="card">
+    <img src="img/cejas.jpg">
+    <h3>Tratamientos De Cejas</h3>
+    <button onclick="irCategoria('cejas')">Ver todos</button>
+  </div>
+
+  <div class="card">
+    <img src="img/pestañas.jpg">
+    <h3>Tratamientos De Pestañas</h3>
+    <button onclick="irCategoria('pestañas')">Ver todos</button>
+  </div>
+
+</div>
+
+<script>
+function irCategoria(cat){
+  localStorage.setItem("categoria", cat);
+  window.location.href = "categoria.html";
+}
+</script>
+
+</body>
+</html>

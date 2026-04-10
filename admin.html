@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Administrador</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<h2 class="titulo">Panel Administrador 👩‍💼</h2>
+
+<!-- ================= AGREGAR SERVICIO ================= -->
+<div class="container">
+
+  <h3>Agregar servicio</h3>
+
+  <input type="text" id="nombre" placeholder="Nombre servicio">
+  <input type="number" id="precio" placeholder="Precio">
+  <input type="text" id="duracion" placeholder="Duración">
+
+  <select id="categoria">
+    <option value="">Categoría</option>
+    <option value="uñas">Uñas</option>
+    <option value="cejas">Cejas</option>
+    <option value="depilacion">Depilación</option>
+  </select>
+
+  <button onclick="agregarServicio()">Agregar</button>
+
+</div>
+
+<h3 class="titulo">Servicios</h3>
+<div id="listaServicios"></div>
+
+<hr>
+
+<h3 class="titulo">Citas de clientes 📅</h3>
+<div id="listaCitas"></div>
+
+<script type="module">
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+import { app } from "./js/firebase-config.js";
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ================= VALIDAR LOGIN =================
+onAuthStateChanged(auth, (user) => {
+
+  if(!user){
+    window.location.href = "login.html";
+    return;
+  }
+
+  cargarServicios();
+  cargarCitas();
+
+});
+
+// ================= SERVICIOS =================
+async function cargarServicios(){
+
+  const contenedor = document.getElementById("listaServicios");
+  const snap = await getDocs(collection(db, "servicios"));
+
+  let html = "";
+
+  snap.forEach(docSnap => {
+
+    const s = docSnap.data();
+    const id = docSnap.id;
+
+    html += `
+      <div class="servicio">
+        <h3>${s.nombre}</h3>
+        <p>$${s.precio}</p>
+        <p>${s.duracion}</p>
+        <p>${s.categoria}</p>
+
+        <button onclick="editar('${id}')">Editar ✏️</button>
+        <button onclick="eliminar('${id}')">Eliminar ❌</button>
+      </div>
+    `;
+  });
+
+  contenedor.innerHTML = html;
+}
+
+// AGREGAR
+window.agregarServicio = async () => {
+
+  const nombre = document.getElementById("nombre").value;
+  const precio = document.getElementById("precio").value;
+  const duracion = document.getElementById("duracion").value;
+  const categoria = document.getElementById("categoria").value;
+
+  if(!nombre || !precio || !duracion || !categoria){
+    alert("Completa todo ⚠️");
+    return;
+  }
+
+  await addDoc(collection(db, "servicios"), {
+    nombre,
+    precio: Number(precio),
+    duracion,
+    categoria
+  });
+
+  alert("Servicio agregado 💖");
+  location.reload();
+};
+
+// ELIMINAR
+window.eliminar = async (id) => {
+  await deleteDoc(doc(db, "servicios", id));
+  location.reload();
+};
+
+// EDITAR
+window.editar = async (id) => {
+
+  const nombre = prompt("Nuevo nombre:");
+  const precio = prompt("Nuevo precio:");
+  const duracion = prompt("Nueva duración:");
+
+  if(!nombre || !precio || !duracion) return;
+
+  await updateDoc(doc(db, "servicios", id), {
+    nombre,
+    precio: Number(precio),
+    duracion
+  });
+
+  location.reload();
+};
+
+// ================= CITAS =================
+async function cargarCitas(){
+
+  const contenedor = document.getElementById("listaCitas");
+
+  const citasSnap = await getDocs(collection(db, "citas"));
+  const usuariosSnap = await getDocs(collection(db, "usuarios"));
+
+  let html = "";
+
+  citasSnap.forEach(docSnap => {
+
+    const c = docSnap.data();
+    const id = docSnap.id;
+
+    let nombreCliente = "Cliente";
+
+    usuariosSnap.forEach(userDoc => {
+
+      const userData = userDoc.data();
+
+      // 🔥 Normalizar email (SOLUCIÓN REAL)
+      if(
+        userData.email.trim().toLowerCase() === 
+        c.usuario.trim().toLowerCase()
+      ){
+        nombreCliente = userData.nombre;
+      }
+
+    });
+
+    html += `
+      <div class="servicio">
+
+        <h3>${c.servicio}</h3>
+
+        <p>👤 ${nombreCliente}</p>
+        <p>📧 ${c.usuario}</p>
+        <p>📅 ${c.fecha}</p>
+        <p>⏰ ${c.hora}</p>
+        <p>📍 ${c.direccion}</p>
+
+        <p><strong>Estado:</strong> ${c.estado || "pendiente"}</p>
+
+        <button onclick="aprobar('${id}')">
+          Aprobar ✅
+        </button>
+
+        <button onclick="rechazar('${id}')">
+          Rechazar ❌
+        </button>
+
+      </div>
+    `;
+  });
+
+  contenedor.innerHTML = html;
+}
+
+// APROBAR
+window.aprobar = async (id) => {
+  await updateDoc(doc(db, "citas", id), {
+    estado: "aprobado"
+  });
+  location.reload();
+};
+
+// RECHAZAR
+window.rechazar = async (id) => {
+  await updateDoc(doc(db, "citas", id), {
+    estado: "rechazado"
+  });
+  location.reload();
+};
+
+</script>
+
+</body>
+</html>

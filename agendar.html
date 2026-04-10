@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<title>Agendar cita</title>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<!-- BOTÓN VOLVER -->
+<button class="btn-volver-float" onclick="volver()">⬅</button>
+
+<div class="container">
+
+  <h2>Agendar cita 📅</h2>
+
+  <!-- SERVICIO -->
+  <input type="text" id="servicio" readonly>
+
+  <!-- FECHA -->
+  <input type="date" id="fecha">
+
+  <!-- HORA -->
+  <input type="time" id="hora">
+
+  <!-- DIRECCIÓN -->
+  <select id="direccion">
+    <option value="" disabled selected>📍 Selecciona tu dirección</option>
+  </select>
+
+  <!-- BOTÓN -->
+  <button onclick="guardarCita()">Guardar cita</button>
+
+</div>
+
+<script type="module">
+
+import { 
+  getFirestore, 
+  collection, 
+  addDoc 
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+import { 
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+import { app } from "./js/firebase-config.js";
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// ================= SERVICIO =================
+const servicio = localStorage.getItem("servicio");
+document.getElementById("servicio").value = servicio;
+
+// ================= DIRECCIONES =================
+onAuthStateChanged(auth, (user) => {
+
+  if(user){
+
+    const direccion1 = localStorage.getItem("direccion1");
+    const direccion2 = localStorage.getItem("direccion2");
+
+    const select = document.getElementById("direccion");
+
+    select.innerHTML = `<option value="">Selecciona dirección</option>`;
+
+    if(direccion1){
+      select.innerHTML += `<option value="${direccion1}">${direccion1}</option>`;
+    }
+
+    if(direccion2){
+      select.innerHTML += `<option value="${direccion2}">${direccion2}</option>`;
+    }
+
+  } else {
+
+    alert("Debes iniciar sesión ⚠️");
+    window.location.href = "login.html";
+
+  }
+
+});
+
+// ================= GUARDAR =================
+window.guardarCita = async () => {
+
+  const fecha = document.getElementById("fecha").value;
+  const hora = document.getElementById("hora").value;
+  const direccion = document.getElementById("direccion").value;
+
+  if(!fecha || !hora || !direccion){
+    alert("Completa todos los campos ⚠️");
+    return;
+  }
+
+  try {
+
+    await addDoc(collection(db, "citas"), {
+      usuario: auth.currentUser.email,
+      servicio: servicio,
+      fecha: fecha,
+      hora: hora,
+      direccion: direccion
+    });
+
+    alert("Cita agendada con éxito 💖");
+
+    window.location.href = "index.html";
+
+  } catch (error) {
+
+    alert("Error: " + error.message);
+
+  }
+
+};
+
+// ================= VOLVER =================
+window.volver = () => {
+  window.location.href = "index.html";
+};
+
+</script>
+
+</body>
+</html>

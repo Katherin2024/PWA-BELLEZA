@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Iniciar Sesión 💖</h1>
+
+  <input type="email" id="email" placeholder="Correo electrónico">
+  <input type="password" id="password" placeholder="Contraseña">
+
+  <button onclick="iniciarSesion()">Ingresar</button>
+
+  <p>¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
+  <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p>
+
+</div>
+
+<script type="module">
+
+import {
+  getAuth,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+import { app } from "./js/firebase-config.js";
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ================= LOGIN =================
+window.iniciarSesion = async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if(!email || !password){
+    alert("Completa los campos ⚠️");
+    return;
+  }
+
+  try {
+
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // 🔥 CONSULTAR ROL
+    const docRef = doc(db, "usuarios", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists()){
+
+      const data = docSnap.data();
+
+      // 🔐 REDIRECCIÓN
+      if(data.rol === "admin"){
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "index.html";
+      }
+
+    }
+
+  } catch (error) {
+
+    alert("Error: " + error.message);
+
+  }
+
+};
+
+</script>
+
+</body>
+</html>
