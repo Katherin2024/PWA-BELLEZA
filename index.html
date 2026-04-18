@@ -1,77 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PWA Belleza</title>
-
-  <link rel="stylesheet" href="css/style.css">
-
+  <link rel="stylesheet" href="css/index.css">
 </head>
-
 <body>
 
-  <!-- ================= HEADER ================= -->
   <header class="header">
-
-    <!-- Logo -->
-    <div class="logo">
-      💅 <span>PWA Belleza</span>
-    </div>
-
-    <!-- Menú -->
+    <div class="logo">💅 <span>PWA Belleza</span></div>
     <nav class="menu">
-
       <a href="servicios.html">Servicios</a>
       <a href="mis-citas.html" class="btn-outline">Mis citas</a>      
-      <!-- Login -->
       <button id="btnLogin" class="btn-outline" onclick="irLogin()">Login</button>
-
-      <!-- Logout -->
       <button id="btnLogout" class="btn-solid" onclick="cerrarSesion()">Cerrar Sesion</button>
-
     </nav>
-
   </header>
 
-  <!-- Saludo -->
   <h2 id="saludo" class="saludo"></h2>
 
-  <!-- ================= SCRIPT ================= -->
-  <script type="module">
+ <div class="carousel-container">
+    <button class="btn-nav prev" id="btnPrev">❮</button>
 
+    <div class="carousel-window">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="slide">
+                <img src="img/belleza.jpg" alt="Uñas">
+                <p>Arreglo de cejas </p>
+            </div>
+            <div class="slide">
+                <img src="img/belleza2.jpg" alt="Pestañas">
+                <p>Cejas ✨</p>
+            </div>
+            <div class="slide">
+                <img src="img/cuidado.jpg" alt="Cejas">
+                <p>Diseño de Uñas </p>
+            </div>
+            <div class="slide">
+                <img src="img/depilacion2.jpg" alt="Depilación">
+                <p>Depilación corporal </p>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-nav next" id="btnNext">❯</button>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+      
+      <div class="footer-section">
+        <div class="logo-footer">💅 PWA Belleza</div>
+        <p>Realzando tu belleza natural con los mejores profesionales y productos de alta calidad.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Horarios de Atención</h3>
+        <p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
+        <p>Sábados: 10:00 AM - 4:00 PM</p>
+        <p>Domingos: Cerrado</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p>📍 Calle Belleza #123, Ciudad Belleza</p>
+        <p>📞 +123 456 7890</p>
+        <p>✉️ contacto@pwabelleza.com</p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      &copy; 2026 PWA Belleza - Todos los derechos reservados
+    </div>
+  </footer>
+
+<script src="js/index.js"></script>
+
+  <script type="module">
     import { getAuth, onAuthStateChanged, signOut } 
     from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
     import { app } from "./js/firebase-config.js";
 
     const auth = getAuth(app);
 
-    // Mostrar botones dinámicos
     onAuthStateChanged(auth, (user) => {
-
+      const saludo = document.getElementById("saludo");
       if (user) {
         document.getElementById("btnLogin").style.display = "none";
         document.getElementById("btnLogout").style.display = "inline-block";
-        document.getElementById("saludo").innerText = "Bienvenid@ 💖";
+        saludo.innerText = "Bienvenid@ 💖";
       } else {
         document.getElementById("btnLogin").style.display = "inline-block";
         document.getElementById("btnLogout").style.display = "none";
-        document.getElementById("saludo").innerText = "Explora nuestros servicios 💅";
+        saludo.innerText = "Explora nuestros servicios 💅";
       }
-
     });
 
-    window.irLogin = () => {
-      window.location.href = "login.html";
-    };
-
-    window.cerrarSesion = () => {
-      signOut(auth).then(() => location.reload());
-    };
-
+    window.irLogin = () => { window.location.href = "login.html"; };
+    window.cerrarSesion = () => { signOut(auth).then(() => location.reload()); };
   </script>
 
+ 
 </body>
 </html>

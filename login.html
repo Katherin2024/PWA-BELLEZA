@@ -1,32 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Login</title>
-<link rel="stylesheet" href="css/style.css">
+
+  <!-- Configuración básica -->
+  <meta charset="UTF-8">
+  <title>Login</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
 
+<!-- ================= CONTENEDOR ================= -->
 <div class="container">
 
+  <!-- TÍTULO -->
   <h1>Iniciar Sesión 💖</h1>
 
-  <input type="email" id="email" placeholder="Correo electrónico">
-  <input type="password" id="password" placeholder="Contraseña">
+  <!-- INPUT CORREO -->
+  <input 
+    type="email" 
+    id="email" 
+    placeholder="Correo electrónico"
+  >
 
-  <button onclick="iniciarSesion()">Ingresar</button>
+  <!-- INPUT CONTRASEÑA -->
+  <input 
+    type="password" 
+    id="password" 
+    placeholder="Contraseña"
+  >
 
-  <p>¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
-  <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p>
+  <!-- BOTÓN LOGIN -->
+  <button onclick="iniciarSesion()">
+    Ingresar
+  </button>
+
+  <!-- LINK REGISTRO -->
+  <p>
+    ¿No tienes cuenta? 
+    <a href="registro.html">Regístrate</a>
+  </p>
+
+  <!-- RECUPERAR CONTRASEÑA (SIN REDIRECCIÓN) -->
+  <p>
+    <a href="#" onclick="recuperarPassword()">
+      ¿Olvidaste tu contraseña?
+    </a>
+  </p>
 
 </div>
 
+<!-- ================= SCRIPT ================= -->
 <script type="module">
 
+// ================= IMPORTAR FIREBASE =================
 import {
   getAuth,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 import {
@@ -37,15 +71,18 @@ import {
 
 import { app } from "./js/firebase-config.js";
 
+// ================= INICIALIZAR =================
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 // ================= LOGIN =================
 window.iniciarSesion = async () => {
 
+  // Obtener datos del formulario
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  // Validación
   if(!email || !password){
     alert("Completa los campos ⚠️");
     return;
@@ -53,10 +90,11 @@ window.iniciarSesion = async () => {
 
   try {
 
+    // Iniciar sesión
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔥 CONSULTAR ROL
+    // Consultar rol en Firestore
     const docRef = doc(db, "usuarios", user.uid);
     const docSnap = await getDoc(docRef);
 
@@ -64,7 +102,7 @@ window.iniciarSesion = async () => {
 
       const data = docSnap.data();
 
-      // 🔐 REDIRECCIÓN
+      // Redirección según rol
       if(data.rol === "admin"){
         window.location.href = "admin.html";
       } else {
@@ -72,6 +110,32 @@ window.iniciarSesion = async () => {
       }
 
     }
+
+  } catch (error) {
+
+    alert("Error: " + error.message);
+
+  }
+
+};
+
+// ================= RECUPERAR CONTRASEÑA =================
+window.recuperarPassword = async () => {
+
+  const email = document.getElementById("email").value;
+
+  // Validar que haya correo
+  if(!email){
+    alert("Ingresa tu correo primero 📧");
+    return;
+  }
+
+  try {
+
+    // Enviar correo de recuperación
+    await sendPasswordResetEmail(auth, email);
+
+    alert("Correo enviado 💌 Revisa tu bandeja");
 
   } catch (error) {
 

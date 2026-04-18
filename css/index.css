@@ -1,0 +1,308 @@
+/* ================= RESET & BASE ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f8e8ff, #ffd6f9);
+  min-height: 100vh;
+  color: #333;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================= HEADER ================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(45deg, #ff4ecb, #ff0080);
+  padding: 15px 30px;
+  color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo { font-size: 22px; font-weight: bold; }
+.menu { display: flex; gap: 15px; align-items: center; }
+.menu a { color: white; text-decoration: none; font-weight: bold; font-size: 14px; }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-outline:hover { background: white; color: #ff0080; }
+
+.btn-solid {
+  background: white;
+  color: #ff0080;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.btn-solid:hover { background: #ffe6f5; }
+
+.saludo { text-align: center; margin: 30px 0; font-size: 26px; }
+
+/* ================= CARRUSEL PROFESIONAL ================= */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+/* El contenedor que recorta lo que sobra */
+.carousel-window {
+  width: 100%;
+  overflow: hidden; 
+  border-radius: 30px;
+  background: white;
+  position: relative;
+}
+
+/* La tira de imágenes que se mueve */
+.carousel-window {
+    width: 100%;
+    max-width: 800px; /* Ancho de la ventana */
+    overflow: hidden; /* Esconde lo que no está en la ventana */
+    border-radius: 25px;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Busca estas clases y asegúrate de que tengan estas propiedades */
+.carousel-track {
+    display: flex;
+    width: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Añadimos esto para evitar espacios fantasmas */
+    gap: 0; 
+}
+
+.slide {
+    /* Usamos flex: 0 0 100% para asegurar que mida exactamente el 100% */
+    flex: 0 0 100%; 
+    min-width: 100%;
+    max-width: 100%;
+    outline: none; /* Evita bordes de selección */
+    text-align: center;
+}
+
+.slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+}
+
+.slide p {
+    padding: 20px;
+    font-size: 22px;
+    color: #ff0080;
+    font-weight: bold;
+}
+/* ================= BOTONES DE NAVEGACIÓN ================= */
+.btn-nav {
+  width: 60px;
+  height: 60px;
+  background: #ff0080;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(255, 0, 128, 0.4);
+  z-index: 10;
+}
+
+.btn-nav:hover {
+  background: #ff4ecb;
+  transform: scale(1.15);
+}
+
+.btn-nav:active { transform: scale(0.95); }
+
+/* Posicionamiento superpuesto */
+.prev { margin-right: -30px; }
+.next { margin-left: -30px; }
+/* ================= FOOTER ================= */
+.footer {
+  background-color: #c70867;
+  color: white;
+  padding: 40px 20px 10px 20px;
+  margin-top: 50px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 250px;
+}
+
+.logo-footer {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #ff4ecb; /* Fucsia vibrante */
+}
+
+.footer-section h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  border-bottom: 2px solid #ff0080;
+  display: inline-block;
+  color: white;
+}
+
+.footer-section p {
+  color: #ffd6f9; /* Texto en rosa muy claro para mejor lectura */
+  line-height: 1.6;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  color: rgba(255, 214, 249, 0.6);
+}
+
+
+
+/* Tablets y Celulares Grandes (menos de 768px) */
+@media (max-width: 768px) {
+  
+  /* 1. Header: Ajustamos para que no ocupe tanto espacio */
+  .header {
+    flex-direction: column; /* Apila logo y menú */
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .menu {
+    gap: 10px;
+    flex-wrap: wrap; /* Si hay muchos botones, se envuelven */
+    justify-content: center;
+  }
+
+  .btn-outline, .btn-solid {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  /* 2. Saludo: Reducimos el tamaño de la fuente */
+  .saludo {
+    font-size: 22px;
+    margin: 20px 0;
+  }
+
+  /* 3. Carrusel: Reducimos la altura de la imagen */
+  .slide img {
+    height: 300px; /* Más bajo para que quepa en la pantalla del móvil */
+  }
+
+  .slide p {
+    font-size: 18px;
+    padding: 15px;
+  }
+
+  /* 4. Navegación: El cambio más importante */
+  .carousel-container {
+    padding: 0 10px;
+    gap: 10px; /* Espacio entre botones y ventana */
+  }
+
+  .btn-nav {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    /* Quitamos los márgenes negativos para que no se salgan del borde del celular */
+    margin: 0; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  /* Ajustamos la ventana para que se vea bien con los botones a los lados */
+  .carousel-window {
+    border-radius: 20px;
+  }
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-section h3 {
+    width: fit-content;
+    margin: 0 auto 15px auto;
+  }
+  
+  .footer-section {
+    margin-bottom: 20px;
+  }
+}
+
+/* Celulares Pequeños (menos de 480px) */
+@media (max-width: 480px) {
+  .slide img {
+    height: 240px; /* Aún más pequeño para pantallas tipo iPhone SE */
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .btn-nav {
+    width: 38px;
+    height: 38px;
+  }
+  .footer {
+    padding: 30px 15px 15px 15px;
+  }
+
+  .logo-footer {
+    font-size: 19px;
+  }
+
+  .footer-section h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .footer-section p {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+
+  .footer-bottom {
+    margin-top: 25px;
+    font-size: 11px;
+  }
+  
+}
