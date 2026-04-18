@@ -1,27 +1,35 @@
-/* ===================== RESET GENERAL ===================== */
+/* =======================================================
+   RESET GENERAL
+======================================================= */
 *{
-    margin:0; /* Quita márgenes */
-    padding:0; /* Quita relleno */
-    box-sizing:border-box; /* Mejor control tamaños */
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* ===================== BODY ===================== */
+/* =======================================================
+   BODY
+======================================================= */
 body{
     font-family:Arial, Helvetica, sans-serif;
-    background:linear-gradient(135deg,#fce4ff,#f8d6ff);
+    background:linear-gradient(135deg,#f8e4ff,#efd3f5);
     min-height:100vh;
+    color:#222;
 }
 
-/* ===================== HEADER ===================== */
+/* =======================================================
+   HEADER
+======================================================= */
 .header{
-    background:linear-gradient(45deg,#ff42b3,#ff0080);
+    background:linear-gradient(45deg,#ff3ea5,#ff0080);
     color:white;
-    padding:15px 20px;
 
     display:flex;
     justify-content:space-between;
     align-items:center;
     flex-wrap:wrap;
+
+    padding:15px 20px;
 }
 
 .logo{
@@ -33,197 +41,386 @@ body{
     display:flex;
     gap:10px;
     flex-wrap:wrap;
+    align-items:center;
 }
 
-.menu a,
-.menu button{
+.menu a{
+    color:white;
     text-decoration:none;
-    border:none;
-    cursor:pointer;
-    padding:10px 14px;
-    border-radius:20px;
     font-weight:bold;
 }
 
-/* Botón transparente */
+/* =======================================================
+   BOTONES HEADER
+======================================================= */
 .btn-outline{
     background:transparent;
     border:1px solid white;
     color:white;
+    padding:10px 14px;
+    border-radius:20px;
+    cursor:pointer;
 }
 
-/* Botón sólido */
 .btn-solid{
     background:white;
+    border:none;
     color:#ff0080;
+    padding:10px 14px;
+    border-radius:20px;
+    cursor:pointer;
 }
 
-/* ===================== TITULOS ===================== */
+/* =======================================================
+   TITULOS
+======================================================= */
 .titulo{
     text-align:center;
     margin:25px 10px;
-    color:#333;
+    font-size:32px;
+    font-weight:bold;
 }
 
-/* ===================== CONTENEDOR GENERAL ===================== */
+/* =======================================================
+   CONTENEDOR FORMULARIOS
+======================================================= */
 .container{
     width:95%;
     max-width:450px;
-    background:white;
+    text-align: center;
     margin:25px auto;
+    background:white;
     padding:25px;
-    border-radius:20px;
+    border-radius:22px;
     box-shadow:0 10px 25px rgba(0,0,0,.10);
 }
 
-/* ===================== INPUTS ===================== */
+/* =======================================================
+   INPUTS
+======================================================= */
 input,
 textarea,
 select{
     width:100%;
     padding:14px;
     margin:10px 0;
-    border-radius:12px;
+
     border:1px solid #ddd;
+    border-radius:14px;
+
     font-size:15px;
     outline:none;
 }
 
-/* Focus */
 input:focus,
 textarea:focus,
 select:focus{
     border-color:#ff0080;
 }
 
-/* Textarea */
 textarea{
     resize:none;
-    height:130px;
+    min-height:130px;
 }
 
-/* ===================== BOTONES ===================== */
+/* =======================================================
+   BOTONES GENERALES
+======================================================= */
 button{
     width:100%;
     padding:14px;
+    margin-top:12px;
+
     border:none;
-    border-radius:12px;
-    background:linear-gradient(45deg,#ff42b3,#ff0080);
+    border-radius:14px;
+
+    background:linear-gradient(45deg,#ff3ea5,#ff0080);
     color:white;
+
     font-size:16px;
     cursor:pointer;
-    margin-top:10px;
 }
 
 button:hover{
-    opacity:.9;
+    opacity:.92;
 }
 
-/* ===================== LINKS ===================== */
+/* =======================================================
+   LINKS
+======================================================= */
 a{
     color:#ff0080;
     text-decoration:none;
     font-weight:bold;
 }
 
-/* ===================== TARJETAS SERVICIOS ===================== */
-.contenedor-categorias{
-    width:95%;
-    margin:auto;
-
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:white;
-    border-radius:18px;
-    padding:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.10);
-    text-align:center;
-}
-
-.card img{
-    width:100%;
-    height:180px;
-    object-fit:cover;
-    border-radius:15px;
-}
-
-.card h3{
-    font-size:15px;
-    margin:10px 0;
-    min-height:45px;
-}
-
-/* ===================== BOTON VOLVER ===================== */
-.btn-volver-float{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    font-size:20px;
-    z-index:1000;
-}
-
-/* ===================== TEXTO ===================== */
 p{
     margin-top:10px;
     line-height:1.5;
 }
 
-/* ===================== RESPONSIVE MOVIL ===================== */
+/* =======================================================
+   SERVICIOS.HTML  (CARDS INICIO)
+======================================================= */
+.contenedor-categorias{
+    width:95%;
+    max-width:1100px;
+    margin:25px auto;
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+}
+
+.card{
+    background:white;
+    padding:16px;
+    border-radius:22px;
+    box-shadow:0 8px 18px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+.card img{
+    width:100%;
+    height:200px;
+    object-fit:cover;
+    border-radius:18px;
+}
+
+.card h3{
+    margin:14px 0;
+    font-size:17px;
+    min-height:45px;
+}
+
+/* =======================================================
+   CATEGORIA.HTML (SERVICIOS BONITOS)
+======================================================= */
+#listaServicios{
+    width:95%;
+    max-width:550px;
+    margin:30px auto;
+
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+/* tarjeta individual */
+.servicio{
+    background:white;
+    padding:25px;
+    border-radius:22px;
+    box-shadow:0 8px 18px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+/* nombre */
+.servicio h3{
+    font-size:24px;
+    margin-bottom:15px;
+    color:#222;
+}
+
+/* textos */
+.servicio p{
+    margin:8px 0;
+    font-size:18px;
+}
+
+/* primer párrafo = precio */
+.servicio p:first-of-type{
+    color:#ff0080;
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* botón agendar */
+.servicio button{
+    margin-top:15px;
+}
+
+/* =======================================================
+   BOTON VOLVER FLOTANTE
+======================================================= */
+.btn-volver-float{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+
+    width:55px;
+    height:55px;
+
+    border:none;
+    border-radius:50%;
+
+    background:linear-gradient(45deg,#ff3ea5,#ff0080);
+    color:white;
+
+    font-size:22px;
+    cursor:pointer;
+
+    z-index:999;
+}
+
+
+/* ======================================================
+   SOLO PANEL ADMIN
+   PEGAR AL FINAL DE TU style.css ACTUAL
+====================================================== */
+
+.admin-box{
+    width:95%;
+    max-width:500px;
+    margin:25px auto;
+    background:white;
+    padding:25px;
+    border-radius:22px;
+    box-shadow:0 8px 18px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+.admin-list{
+    width:95%;
+    max-width:500px;
+    margin:20px auto;
+
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.admin-card{
+    background:white;
+    padding:25px;
+    border-radius:22px;
+    box-shadow:0 8px 18px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+.admin-card h3{
+    font-size:24px;
+    margin-bottom:12px;
+}
+
+.admin-card p{
+    margin:8px 0;
+    font-size:16px;
+}
+
+/* Botones aprobar */
+.admin-list.citas .admin-card button:first-of-type{
+    background:linear-gradient(45deg,#00b894,#00a86b);
+}
+
+/* Botones rechazar */
+.admin-list.citas .admin-card button:last-of-type{
+    background:linear-gradient(45deg,#ff4d6d,#ff1744);
+}
+
+/* Responsive */
+@media(max-width:480px){
+
+    .admin-box,
+    .admin-list{
+        width:94%;
+    }
+
+    .admin-card{
+        padding:20px;
+    }
+
+    .admin-card h3{
+        font-size:22px;
+    }
+}
+
+/* =======================================================
+   RESPONSIVE TABLET
+======================================================= */
 @media(max-width:768px){
 
     .header{
         flex-direction:column;
-        text-align:center;
         gap:15px;
+        text-align:center;
     }
 
     .menu{
         justify-content:center;
     }
 
+    .titulo{
+        font-size:28px;
+    }
+
     .container{
         width:94%;
-        padding:20px;
-        margin:20px auto;
     }
 
     .contenedor-categorias{
-        grid-template-columns:1fr 1fr;
-        gap:15px;
+        grid-template-columns:repeat(2,1fr);
     }
 
     .card img{
-        height:160px;
+        height:180px;
     }
 }
 
-/* ===================== CELULAR PEQUEÑO ===================== */
+/* =======================================================
+   RESPONSIVE CELULAR
+======================================================= */
 @media(max-width:480px){
 
-    .contenedor-categorias{
-        grid-template-columns:1fr;
-    }
-
-    .card{
-        padding:18px;
-    }
-
-    .card img{
-        height:220px;
+    .titulo{
+        font-size:24px;
     }
 
     .logo{
         font-size:20px;
     }
 
-    .titulo{
-        font-size:24px;
+    .menu{
+        width:100%;
+        flex-direction:column;
+    }
+
+    .menu a,
+    .menu button{
+        width:100%;
+        text-align:center;
+    }
+
+    .contenedor-categorias{
+        grid-template-columns:1fr;
+    }
+
+    .card img{
+        height:220px;
+    }
+
+    .card h3{
+        font-size:18px;
+    }
+
+    .servicio{
+        padding:20px;
+    }
+
+    .servicio h3{
+        font-size:21px;
+    }
+
+    .servicio p{
+        font-size:17px;
+    }
+
+    .servicio p:first-of-type{
+        font-size:20px;
+    }
+
+    .btn-volver-float{
+        width:52px;
+        height:52px;
     }
 }

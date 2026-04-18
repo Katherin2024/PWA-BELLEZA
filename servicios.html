@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <title>Servicios</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/index.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body>
+  
+<button class="btn-volver-float" onclick="volver()">⬅</button>
 
 <header class="header">
   <div class="logo">💅 Belleza</div>
-  <nav class="menu">
-    <a href="index.html">Inicio</a>
-  </nav>
-</header>
+ </header>
 
 <h1 class="titulo">Servicios 💖</h1>
 
@@ -51,7 +51,42 @@ function irCategoria(cat){
   localStorage.setItem("categoria", cat);
   window.location.href = "categoria.html";
 }
+
+// ================= VOLVER =================
+window.volver = () => {
+  window.location.href = "index.html";
+};
 </script>
 
+<footer class="footer">
+    <div class="footer-content">
+      
+      <div class="footer-section">
+        <div class="logo-footer">💅Belleza</div>
+        <p>Realzando tu belleza natural con los mejores profesionales y productos de alta calidad.</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Horarios de Atención</h3>
+        <p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
+        <p>Sábados: 10:00 AM - 4:00 PM</p>
+        <p>Domingos: Cerrado</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <p>📍 Calle Belleza #123, Ciudad Belleza</p>
+        <p>📞 +123 456 7890</p>
+        <p>✉️ contacto@pwabelleza.com</p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      &copy; 2026 Belleza - Todos los derechos reservados
+    </div>
+  </footer>
+
+  
 </body>
 </html>
