@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registro</title>
 <link rel="stylesheet" href="css/style.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>Crear Cuenta 💖</h1>
+<h1>Crear Cuenta 💖</h1>
 
-  <input type="text" id="nombre" placeholder="Nombre completo">
-  <input type="email" id="email" placeholder="Correo electrónico">
-  <input type="password" id="password" placeholder="Contraseña">
-  <input type="text" id="telefono" placeholder="Teléfono">
-  <input type="text" id="direccion1" placeholder="Dirección principal">
-  <input type="text" id="direccion2" placeholder="Dirección opcional">
+<input type="text" id="nombre" placeholder="Nombre completo">
 
-  <button onclick="registrarUsuario()">Registrarse</button>
+<input type="email" id="email" placeholder="Correo electrónico">
 
-  <p>¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></p>
+<input type="password" id="password" placeholder="Contraseña">
+
+<label>
+<input type="checkbox" onclick="mostrarClave()">
+Mostrar contraseña
+</label>
+
+<input type="text" id="telefono" placeholder="Teléfono">
+
+<input type="text" id="direccion1" placeholder="Dirección principal">
+
+<input type="text" id="direccion2" placeholder="Dirección opcional">
+
+<button onclick="registrarUsuario()">
+Registrarse
+</button>
+
+<p>
+¿Ya tienes cuenta?
+<a href="login.html">Iniciar sesión</a>
+</p>
 
 </div>
 
 <script type="module">
 
 import {
-  getAuth,
-  createUserWithEmailAndPassword
+getAuth,
+createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 import {
-  getFirestore,
-  doc,
-  setDoc
+getFirestore,
+doc,
+setDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 import { app } from "./js/firebase-config.js";
@@ -46,57 +59,62 @@ import { app } from "./js/firebase-config.js";
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ================= REGISTRO =================
+/* Mostrar clave */
+window.mostrarClave = () => {
+
+const pass = document.getElementById("password");
+
+pass.type =
+pass.type === "password"
+? "text"
+: "password";
+
+};
+
+/* Registro */
 window.registrarUsuario = async () => {
 
-  // 📥 DATOS
-  const nombre = document.getElementById("nombre").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const telefono = document.getElementById("telefono").value;
-  const direccion1 = document.getElementById("direccion1").value;
-  const direccion2 = document.getElementById("direccion2").value;
+const nombre = document.getElementById("nombre").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const telefono = document.getElementById("telefono").value;
+const direccion1 = document.getElementById("direccion1").value;
+const direccion2 = document.getElementById("direccion2").value;
 
-  // VALIDACIÓN
-  if(!nombre || !email || !password || !telefono || !direccion1){
-    alert("Completa todos los campos ⚠️");
-    return;
-  }
+if(!nombre || !email || !password || !telefono || !direccion1){
+alert("Completa todos los campos ⚠️");
+return;
+}
 
-  if(password.length < 6){
-    alert("La contraseña debe tener mínimo 6 caracteres 🔒");
-    return;
-  }
+if(password.length < 6){
+alert("Mínimo 6 caracteres 🔒");
+return;
+}
 
-  try {
+try{
 
-    // 🔥 CREAR USUARIO
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+const userCredential =
+await createUserWithEmailAndPassword(auth,email,password);
 
-    // 💾 GUARDAR EN FIREBASE (PRO)
-    await setDoc(doc(db, "usuarios", user.uid), {
-      nombre,
-      email,
-      telefono,
-      direccion1,
-      direccion2
-    });
+const user = userCredential.user;
 
-    // 💾 🔥 GUARDAR EN LOCALSTORAGE (CLAVE PARA AGENDAR)
-    localStorage.setItem("direccion1", direccion1);
-    localStorage.setItem("direccion2", direccion2);
+await setDoc(doc(db,"usuarios",user.uid),{
+nombre,
+email,
+telefono,
+direccion1,
+direccion2
+});
 
-    alert("Registro exitoso 💖");
+alert("Registro exitoso 💖");
 
-    // 🔁 IR A LOGIN
-    window.location.href = "login.html";
+window.location.href="login.html";
 
-  } catch (error) {
+}catch(error){
 
-    alert("Error: " + error.message);
+alert("Error: " + error.message);
 
-  }
+}
 
 };
 

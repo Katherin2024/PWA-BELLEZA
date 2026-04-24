@@ -3,9 +3,11 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Mis citas</title>
-<link rel="stylesheet" href="css/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mis citas</title>
+
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -14,109 +16,154 @@
 <!-- BOTÓN VOLVER -->
 <button class="btn-volver-float" onclick="volver()">⬅</button>
 
+<!-- TÍTULO -->
 <h2 class="titulo">Mis citas 💖</h2>
 
-<div id="listaCitas"></div>
+<!-- CONTENEDOR -->
+<div class="mis-citas-wrap">
+
+    <!-- LISTA DE CITAS -->
+    <div id="listaCitas" class="mis-citas-grid"></div>
+
+</div>
 
 <script type="module">
 
-import { 
-  getFirestore, 
-  collection, 
-  getDocs,
-  deleteDoc,
-  doc
+/* ======================================================
+   IMPORTAR FIREBASE
+====================================================== */
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    deleteDoc,
+    doc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-import { 
-  getAuth,
-  onAuthStateChanged 
+import {
+    getAuth,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 import { app } from "./js/firebase-config.js";
 
+/* ======================================================
+   INICIALIZAR
+====================================================== */
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// ================= CARGAR CITAS =================
+/* ======================================================
+   CARGAR CITAS
+====================================================== */
 async function cargarCitas(user){
 
-  const contenedor = document.getElementById("listaCitas");
-  const querySnapshot = await getDocs(collection(db, "citas"));
+    const contenedor =
+    document.getElementById("listaCitas");
 
-  let html = "";
+    const querySnapshot =
+    await getDocs(collection(db,"citas"));
 
-  querySnapshot.forEach((docSnap) => {
+    let html = "";
 
-    const cita = docSnap.data();
-    const id = docSnap.id;
+    querySnapshot.forEach((docSnap)=>{
 
-    if(cita.usuario === user.email){
+        const cita = docSnap.data();
+        const id = docSnap.id;
 
-      html += `
-        <div class="cita">
-          <h3>${cita.servicio}</h3>
-          <p>📅 ${cita.fecha}</p>
-          <p>⏰ ${cita.hora}</p>
-          <p>📍 ${cita.direccion}</p>
+        if(cita.usuario === user.email){
 
-          <button onclick="cancelarCita('${id}')">
-            Cancelar ❌
-          </button>
-        </div>
-      `;
+            html += `
+                <div class="mis-cita-card">
+
+                    <h3>${cita.servicio}</h3>
+
+                    <p>📅 ${cita.fecha}</p>
+
+                    <p>⏰ ${cita.hora}</p>
+
+                    <p>📍 ${cita.direccion}</p>
+
+                    <p class="estado-cita">
+                        Estado:
+                        ${cita.estado || "pendiente"}
+                    </p>
+
+                    <button onclick="cancelarCita('${id}')">
+                        Cancelar ❌
+                    </button>
+
+                </div>
+            `;
+        }
+
+    });
+
+    /* Sin citas */
+    if(html === ""){
+
+        html = `
+            <div class="mis-cita-card">
+                <h3>No tienes citas 💔</h3>
+                <p>Agenda una nueva cita cuando quieras.</p>
+            </div>
+        `;
     }
 
-  });
-
-  if(html === ""){
-    html = `<p style="text-align:center;">No tienes citas 💔</p>`;
-  }
-
-  contenedor.innerHTML = html;
-
+    contenedor.innerHTML = html;
 }
 
-// ================= AUTH =================
-onAuthStateChanged(auth, (user) => {
+/* ======================================================
+   VALIDAR SESIÓN
+====================================================== */
+onAuthStateChanged(auth,(user)=>{
 
-  if(!user){
-    alert("Debes iniciar sesión ⚠️");
-    window.location.href = "login.html";
-    return;
-  }
+    if(!user){
 
-  cargarCitas(user);
+        alert("Debes iniciar sesión ⚠️");
+
+        window.location.href = "login.html";
+
+        return;
+    }
+
+    cargarCitas(user);
 
 });
 
-// ================= CANCELAR =================
-window.cancelarCita = async (id) => {
+/* ======================================================
+   CANCELAR CITA
+====================================================== */
+window.cancelarCita = async(id)=>{
 
-  const confirmar = confirm("¿Cancelar esta cita? ❌");
+    const confirmar =
+    confirm("¿Cancelar esta cita?");
 
-  if(!confirmar) return;
+    if(!confirmar) return;
 
-  try {
+    try{
 
-    await deleteDoc(doc(db, "citas", id));
+        await deleteDoc(doc(db,"citas",id));
 
-    alert("Cita cancelada 💔");
+        alert("Cita cancelada 💔");
 
-    // Recargar lista
-    location.reload();
+        location.reload();
 
-  } catch (error) {
+    }catch(error){
 
-    alert("Error: " + error.message);
+        alert("Error: " + error.message);
 
-  }
+    }
 
 };
 
-// ================= VOLVER =================
-window.volver = () => {
-  window.location.href = "index.html";
+/* ======================================================
+   VOLVER
+====================================================== */
+window.volver = ()=>{
+
+    window.location.href = "index.html";
+
 };
 
 </script>

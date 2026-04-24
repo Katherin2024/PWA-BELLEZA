@@ -3,9 +3,11 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Agendar cita</title>
-<link rel="stylesheet" href="css/style.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Agendar cita</title>
+
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -14,117 +16,190 @@
 <!-- BOTÓN VOLVER -->
 <button class="btn-volver-float" onclick="volver()">⬅</button>
 
+<!-- CONTENEDOR -->
 <div class="container">
 
-  <h2>Agendar cita 📅</h2>
+    <h2>Agendar cita 📅</h2>
 
-  <!-- SERVICIO -->
-  <input type="text" id="servicio" readonly>
+    <!-- SERVICIO -->
+    <input
+        type="text"
+        id="servicio"
+        readonly
+    >
 
-  <!-- FECHA -->
-  <input type="date" id="fecha">
+    <!-- FECHA -->
+    <input
+        type="date"
+        id="fecha"
+    >
 
-  <!-- HORA -->
-  <input type="time" id="hora">
+    <!-- HORA -->
+    <input
+        type="time"
+        id="hora"
+    >
 
-  <!-- DIRECCIÓN -->
-  <select id="direccion">
-    <option value="" disabled selected>📍 Selecciona tu dirección</option>
-  </select>
+    <!-- DIRECCIÓN -->
+    <select id="direccion">
 
-  <!-- BOTÓN -->
-  <button onclick="guardarCita()">Guardar cita</button>
+        <option value="">
+            📍 Selecciona tu dirección
+        </option>
+
+    </select>
+
+    <!-- BOTÓN -->
+    <button onclick="guardarCita()">
+        Guardar cita
+    </button>
 
 </div>
 
+<!-- SCRIPT -->
 <script type="module">
 
-import { 
-  getFirestore, 
-  collection, 
-  addDoc 
+/* ======================================================
+   IMPORTAR FIREBASE
+====================================================== */
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-import { 
-  getAuth,
-  onAuthStateChanged
+import {
+    getAuth,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 import { app } from "./js/firebase-config.js";
 
+/* ======================================================
+   INICIALIZAR
+====================================================== */
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// ================= SERVICIO =================
-const servicio = localStorage.getItem("servicio");
-document.getElementById("servicio").value = servicio;
+/* ======================================================
+   CARGAR SERVICIO
+====================================================== */
+const servicio =
+localStorage.getItem("servicio") || "";
 
-// ================= DIRECCIONES =================
-onAuthStateChanged(auth, (user) => {
+document.getElementById("servicio").value =
+servicio;
 
-  if(user){
+/* ======================================================
+   CARGAR DIRECCIONES DESDE FIREBASE
+====================================================== */
+onAuthStateChanged(auth, async(user) => {
 
-    const direccion1 = localStorage.getItem("direccion1");
-    const direccion2 = localStorage.getItem("direccion2");
+    if(!user){
 
-    const select = document.getElementById("direccion");
+        alert("Debes iniciar sesión ⚠️");
 
-    select.innerHTML = `<option value="">Selecciona dirección</option>`;
+        window.location.href = "login.html";
 
-    if(direccion1){
-      select.innerHTML += `<option value="${direccion1}">${direccion1}</option>`;
+        return;
     }
 
-    if(direccion2){
-      select.innerHTML += `<option value="${direccion2}">${direccion2}</option>`;
+    /* Buscar datos del usuario */
+    const snap =
+    await getDoc(doc(db,"usuarios",user.uid));
+
+    if(snap.exists()){
+
+        const data = snap.data();
+
+        const select =
+        document.getElementById("direccion");
+
+        select.innerHTML =
+        `<option value="">📍 Selecciona tu dirección</option>`;
+
+        /* Dirección principal */
+        if(data.direccion1){
+
+            select.innerHTML += `
+                <option value="${data.direccion1}">
+                    ${data.direccion1}
+                </option>
+            `;
+        }
+
+        /* Dirección secundaria */
+        if(data.direccion2){
+
+            select.innerHTML += `
+                <option value="${data.direccion2}">
+                    ${data.direccion2}
+                </option>
+            `;
+        }
+
     }
-
-  } else {
-
-    alert("Debes iniciar sesión ⚠️");
-    window.location.href = "login.html";
-
-  }
 
 });
 
-// ================= GUARDAR =================
+/* ======================================================
+   GUARDAR CITA
+====================================================== */
 window.guardarCita = async () => {
 
-  const fecha = document.getElementById("fecha").value;
-  const hora = document.getElementById("hora").value;
-  const direccion = document.getElementById("direccion").value;
+    const fecha =
+    document.getElementById("fecha").value;
 
-  if(!fecha || !hora || !direccion){
-    alert("Completa todos los campos ⚠️");
-    return;
-  }
+    const hora =
+    document.getElementById("hora").value;
 
-  try {
+    const direccion =
+    document.getElementById("direccion").value;
 
-    await addDoc(collection(db, "citas"), {
-      usuario: auth.currentUser.email,
-      servicio: servicio,
-      fecha: fecha,
-      hora: hora,
-      direccion: direccion
-    });
+    if(!fecha || !hora || !direccion){
 
-    alert("Cita agendada con éxito 💖");
+        alert("Completa todos los campos ⚠️");
 
-    window.location.href = "index.html";
+        return;
+    }
 
-  } catch (error) {
+    try{
 
-    alert("Error: " + error.message);
+        await addDoc(collection(db,"citas"),{
 
-  }
+            usuario: auth.currentUser.email,
+
+            servicio: servicio,
+
+            fecha: fecha,
+
+            hora: hora,
+
+            direccion: direccion
+
+        });
+
+        alert("Cita agendada con éxito 💖");
+
+        window.location.href = "index.html";
+
+    }catch(error){
+
+        alert("Error: " + error.message);
+
+    }
 
 };
 
-// ================= VOLVER =================
+/* ======================================================
+   VOLVER
+====================================================== */
 window.volver = () => {
-  window.location.href = "index.html";
+
+    window.location.href = "index.html";
+
 };
 
 </script>

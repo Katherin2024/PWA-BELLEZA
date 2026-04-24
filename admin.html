@@ -5,13 +5,13 @@
     <!-- Configuración básica -->
     <meta charset="UTF-8">
 
-    <!-- Responsive móvil -->
+    <!-- Responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Título -->
     <title>Administrador</title>
 
-    <!-- Hoja de estilos general -->
+    <!-- Estilos -->
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -19,39 +19,62 @@
 <body>
 
 <!-- ======================================================
-     TITULO PRINCIPAL
+     HEADER ADMIN
+====================================================== -->
+<header class="header">
+
+    <nav class="menu">
+
+        <!-- Ir al formulario -->
+        <a href="#agregar">Agregar</a>
+
+        <!-- Ir servicios -->
+        <a href="#servicios">Servicios</a>
+
+        <!-- Ir citas -->
+        <a href="#citas">Citas</a>
+
+        <!-- Cerrar sesión -->
+        <button class="btn-solid" onclick="cerrarSesion()">
+            Cerrar Sesión
+        </button>
+
+    </nav>
+
+</header>
+
+<!-- ======================================================
+     TITULO
 ====================================================== -->
 <h1 class="titulo">Panel Administrador 👩‍💼</h1>
 
 <!-- ======================================================
-     FORMULARIO AGREGAR SERVICIO
+     AGREGAR SERVICIO
 ====================================================== -->
+<section id="agregar">
+
 <div class="admin-box">
 
     <h2>Agregar Servicio 💅</h2>
 
-    <!-- Nombre -->
-    <input 
+    <input
         type="text"
         id="nombre"
         placeholder="Nombre del servicio"
     >
 
-    <!-- Precio -->
-    <input 
+    <input
         type="number"
         id="precio"
         placeholder="Precio"
     >
 
-    <!-- Duración -->
-    <input 
+    <input
         type="text"
         id="duracion"
         placeholder="Duración"
     >
 
-    <!-- Categoría -->
     <select id="categoria">
 
         <option value="">Selecciona categoría</option>
@@ -62,29 +85,38 @@
 
     </select>
 
-    <!-- Botón -->
     <button onclick="agregarServicio()">
         Agregar Servicio
     </button>
 
 </div>
 
+</section>
+
 <!-- ======================================================
      SERVICIOS
 ====================================================== -->
+<section id="servicios">
+
 <h2 class="titulo">Servicios Registrados 💖</h2>
 
 <div id="listaServicios" class="admin-list"></div>
 
+</section>
+
 <!-- ======================================================
      CITAS
 ====================================================== -->
+<section id="citas">
+
 <h2 class="titulo">Citas de Clientes 📅</h2>
 
 <div id="listaCitas" class="admin-list citas"></div>
 
+</section>
+
 <!-- ======================================================
-     JAVASCRIPT FIREBASE
+     SCRIPT FIREBASE
 ====================================================== -->
 <script type="module">
 
@@ -103,13 +135,14 @@ import {
 
 import {
     getAuth,
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 import { app } from "./js/firebase-config.js";
 
 /* ======================================================
-   INICIALIZAR FIREBASE
+   INICIALIZAR
 ====================================================== */
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -130,13 +163,24 @@ onAuthStateChanged(auth, (user) => {
 });
 
 /* ======================================================
+   CERRAR SESION
+====================================================== */
+window.cerrarSesion = () => {
+
+    signOut(auth).then(() => {
+        window.location.href = "login.html";
+    });
+
+};
+
+/* ======================================================
    CARGAR SERVICIOS
 ====================================================== */
 async function cargarServicios(){
 
     const contenedor = document.getElementById("listaServicios");
 
-    const snap = await getDocs(collection(db, "servicios"));
+    const snap = await getDocs(collection(db,"servicios"));
 
     let html = "";
 
@@ -186,7 +230,7 @@ window.agregarServicio = async () => {
         return;
     }
 
-    await addDoc(collection(db, "servicios"), {
+    await addDoc(collection(db,"servicios"),{
         nombre,
         precio:Number(precio),
         duracion,
@@ -199,7 +243,7 @@ window.agregarServicio = async () => {
 };
 
 /* ======================================================
-   ELIMINAR SERVICIO
+   ELIMINAR
 ====================================================== */
 window.eliminar = async(id) => {
 
@@ -209,7 +253,7 @@ window.eliminar = async(id) => {
 };
 
 /* ======================================================
-   EDITAR SERVICIO
+   EDITAR
 ====================================================== */
 window.editar = async(id) => {
 
@@ -236,7 +280,6 @@ async function cargarCitas(){
     const contenedor = document.getElementById("listaCitas");
 
     const citasSnap = await getDocs(collection(db,"citas"));
-
     const usuariosSnap = await getDocs(collection(db,"usuarios"));
 
     let html = "";
@@ -294,7 +337,7 @@ async function cargarCitas(){
 }
 
 /* ======================================================
-   APROBAR CITA
+   APROBAR
 ====================================================== */
 window.aprobar = async(id) => {
 
@@ -306,7 +349,7 @@ window.aprobar = async(id) => {
 };
 
 /* ======================================================
-   RECHAZAR CITA
+   RECHAZAR
 ====================================================== */
 window.rechazar = async(id) => {
 

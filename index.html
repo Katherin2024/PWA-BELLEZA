@@ -13,6 +13,7 @@
     <nav class="menu">
       <a href="servicios.html" class="btn-outline">Servicios</a>
       <a href="mis-citas.html" class="btn-outline">Mis citas</a>
+      <a href="perfil.html" class="btn-outline">Mi Perfil</a>
       <a href="contacto.html" class="btn-outline">Contactanos</a>  
       <a href="nosotros.html" class="btn-outline">Saber mas...</a>       
       <button id="btnLogin" class="btn-outline" onclick="irLogin()">Inicia Sesion</button>
@@ -33,7 +34,7 @@
             </div>
             <div class="slide">
                 <img src="img/belleza2.jpg" alt="Pestañas">
-                <p>Cejas ✨</p>
+                <p>Arreglo de pestañas ✨</p>
             </div>
             <div class="slide">
                 <img src="img/cuidado.jpg" alt="Cejas">
@@ -81,29 +82,68 @@
 
 <script src="js/index.js"></script>
 
-  <script type="module">
-    import { getAuth, onAuthStateChanged, signOut } 
-    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-    import { app } from "./js/firebase-config.js";
 
-    const auth = getAuth(app);
+<!-- SOLO REEMPLAZA EL SCRIPT DE INDEX.HTML -->
+<script type="module">
 
-    onAuthStateChanged(auth, (user) => {
-      const saludo = document.getElementById("saludo");
-      if (user) {
-        document.getElementById("btnLogin").style.display = "none";
-        document.getElementById("btnLogout").style.display = "inline-block";
-        saludo.innerText = "Bienvenid@ 💖";
-      } else {
-        document.getElementById("btnLogin").style.display = "inline-block";
-        document.getElementById("btnLogout").style.display = "none";
-        saludo.innerText = "Explora nuestros servicios 💅";
-      }
-    });
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-    window.irLogin = () => { window.location.href = "login.html"; };
-    window.cerrarSesion = () => { signOut(auth).then(() => location.reload()); };
-  </script>
+import {
+getFirestore,
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+import { app } from "./js/firebase-config.js";
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, async(user)=>{
+
+const saludo =
+document.getElementById("saludo");
+
+if(user){
+
+document.getElementById("btnLogin").style.display="none";
+document.getElementById("btnLogout").style.display="inline-block";
+
+const snap =
+await getDoc(doc(db,"usuarios",user.uid));
+
+if(snap.exists()){
+
+saludo.innerText =
+"Hola, " + snap.data().nombre + " 💖";
+
+}
+
+}else{
+
+document.getElementById("btnLogin").style.display="inline-block";
+document.getElementById("btnLogout").style.display="none";
+
+saludo.innerText =
+"Explora nuestros servicios 💅";
+
+}
+
+});
+
+window.irLogin = () => {
+window.location.href="login.html";
+};
+
+window.cerrarSesion = () => {
+signOut(auth).then(()=>location.reload());
+};
+
+</script>
 
  
 </body>

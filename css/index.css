@@ -5,12 +5,28 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #f8e8ff, #ffd6f9);
-  min-height: 100vh;
-  color: #333;
-  -webkit-font-smoothing: antialiased;
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+body{
+    background:linear-gradient(135deg,#ebcfdf,#ca276b);
+    min-height:100vh;
+    color:#222;
+}
+
+/* títulos bonitos */
+h1,
+h2,
+h3,
+a,
+p,
+button,
+.titulo,
+.saludo{
+    font-family:'Great Vibes', cursive;
+    font-weight:normal;
+    letter-spacing:1px;
+    color:#222;
 }
 
 /* ================= HEADER ================= */
@@ -18,7 +34,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(45deg, #ff4ecb, #ff0080);
+  background: linear-gradient(45deg, #eeaddb, #ff0080);
   padding: 15px 30px;
   color: white;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -117,7 +133,7 @@ body {
 .btn-nav {
   width: 60px;
   height: 60px;
-  background: #ff0080;
+  background: #f282fc;
   color: white;
   border: none;
   border-radius: 50%;
@@ -128,14 +144,20 @@ body {
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   flex-shrink: 0;
-  box-shadow: 0 6px 20px rgba(255, 0, 128, 0.4);
+  box-shadow: 0 6px 20px rgba(3, 3, 3, 0.4);
   z-index: 10;
 }
+/* efecto hover */
+.btn-nav:hover{
 
-.btn-nav:hover {
-  background: #ff4ecb;
-  transform: scale(1.15);
+    /* subir tarjeta */
+    transform: translateY(-10px) scale(1.03);
+
+    /* sombra más fuerte */
+    box-shadow:0 18px 28px rgba(243, 167, 243, 0.932);
+
 }
+
 
 .btn-nav:active { transform: scale(0.95); }
 

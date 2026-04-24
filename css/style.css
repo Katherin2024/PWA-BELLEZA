@@ -7,13 +7,27 @@
     box-sizing:border-box;
 }
 
-/* =======================================================
-   BODY
-======================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
 body{
-    font-family:Arial, Helvetica, sans-serif;
-    background:linear-gradient(135deg,#f8e4ff,#efd3f5);
+    font-family: Arial, Helvetica, sans-serif;
+    background:linear-gradient(135deg,#e3cfeb,#864786);
     min-height:100vh;
+    color:#222;
+}
+
+/* títulos bonitos */
+h1,
+h2,
+h3,
+p,
+input,
+button,
+.titulo,
+.saludo{
+    font-family:'Great Vibes', cursive;
+    font-weight:normal;
+    letter-spacing:1px;
     color:#222;
 }
 
@@ -134,7 +148,7 @@ button{
     border:none;
     border-radius:14px;
 
-    background:linear-gradient(45deg,#ff3ea5,#ff0080);
+    background:linear-gradient(45deg,#ff3ea5,#916783);
     color:white;
 
     font-size:16px;
@@ -176,8 +190,22 @@ p{
     background:white;
     padding:16px;
     border-radius:22px;
-    box-shadow:0 8px 18px rgba(0,0,0,.10);
+    box-shadow:0 8px 18px rgba(15, 15, 15, 0.925);
     text-align:center;
+    /* animación suave */
+    transition: all .50s ease;
+
+    cursor:pointer;
+}
+/* efecto hover */
+.card:hover{
+
+    /* subir tarjeta */
+    transform: translateY(-10px) scale(1.03);
+
+    /* sombra más fuerte */
+    box-shadow:0 18px 28px #610b83cb;
+
 }
 
 .card img{
@@ -185,7 +213,11 @@ p{
     height:200px;
     object-fit:cover;
     border-radius:18px;
-}
+    }
+/* zoom imagen */
+.card:hover img{
+    transform: scale(1.05);
+}    
 
 .card h3{
     margin:14px 0;
@@ -214,6 +246,15 @@ p{
     box-shadow:0 8px 18px rgba(0,0,0,.10);
     text-align:center;
 }
+.servicio:hover{
+
+    /* subir tarjeta */
+    transform: translateY(-10px) scale(1.03);
+
+    /* sombra más fuerte */
+    box-shadow:0 18px 28px #610b83cb;
+
+}
 
 /* nombre */
 .servicio h3{
@@ -240,6 +281,81 @@ p{
     margin-top:15px;
 }
 
+/* ======================================================
+   SOLO PARA MIS CITAS
+====================================================== */
+
+.mis-citas-wrap{
+    width: 95%;
+    max-width: 520px;
+    margin: 20px auto 90px auto;
+}
+
+.mis-citas-grid{
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.mis-cita-card{
+    background: white;
+    padding: 25px;
+    border-radius: 22px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.10);
+    text-align: center;
+}
+.mis-cita-card:hover{
+
+    /* subir tarjeta */
+    transform: translateY(-10px) scale(1.03);
+
+    /* sombra más fuerte */
+    box-shadow:0 18px 28px #610b83cb;
+
+}
+
+.mis-cita-card h3{
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #222;
+}
+
+.mis-cita-card p{
+    margin: 10px 0;
+    font-size: 17px;
+}
+
+.estado-cita{
+    color: #ff0080;
+    font-weight: bold;
+}
+
+/* botón cancelar */
+.mis-cita-card button{
+    margin-top: 15px;
+}
+
+/* móvil */
+@media(max-width:480px){
+
+    .mis-citas-wrap{
+        width: 94%;
+    }
+
+    .mis-cita-card{
+        padding: 22px;
+    }
+
+    .mis-cita-card h3{
+        font-size: 22px;
+    }
+
+    .mis-cita-card p{
+        font-size: 16px;
+    }
+
+}
+
 /* =======================================================
    BOTON VOLVER FLOTANTE
 ======================================================= */
@@ -254,7 +370,7 @@ p{
     border:none;
     border-radius:50%;
 
-    background:linear-gradient(45deg,#ff3ea5,#ff0080);
+    background:linear-gradient(45deg,#ff3ea5,#68b2dd);
     color:white;
 
     font-size:22px;
@@ -317,6 +433,7 @@ p{
 .admin-list.citas .admin-card button:last-of-type{
     background:linear-gradient(45deg,#ff4d6d,#ff1744);
 }
+
 
 /* Responsive */
 @media(max-width:480px){
