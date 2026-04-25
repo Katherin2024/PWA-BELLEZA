@@ -58,6 +58,11 @@ titulo.innerText =
 "✨ Tratamientos de pestañas";
 }
 
+if(categoria === "maquillaje"){
+titulo.innerText =
+"✨ Maquillaje Profesional";
+}
+
 /* =========================================
 CARGAR SERVICIOS
 ========================================= */

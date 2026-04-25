@@ -17,240 +17,265 @@ onAuthStateChanged
 }
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-/* Configuración principal */
-import { app }
-from "./firebase-config.js";
+import { app } from "./firebase-config.js";
 
 /* =========================================
 INICIALIZAR
 ========================================= */
-
-/* Base de datos */
-const db =
-getFirestore(app);
-
-/* Autenticación */
-const auth =
-getAuth(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 /* =========================================
-VARIABLES GENERALES
+VARIABLES
 ========================================= */
-
-/* Horarios disponibles */
 const horasBase = [
 "08:00","09:00","10:00","11:00",
 "12:00","13:00","14:00","15:00","16:00"
 ];
 
-/* Tiempo promedio desplazamiento */
 const trayectoMin = 35;
 
-/* Servicios elegidos por usuario */
 let serviciosElegidos = [];
-
-/* Servicios cargados desde Firebase */
 let serviciosFirebase = [];
-
-/* Tiempo total */
 let duracionTotal = 0;
 
+/* Valores pago */
+let totalGeneral = 0;
+let anticipoGeneral = 0;
+let saldoGeneral = 0;
+
 /* =========================================
-CONVERTIR TEXTO A MINUTOS
+OBTENER MINUTOS
 ========================================= */
 function obtenerMinutos(texto){
 
-texto =
-texto.toLowerCase();
+texto = String(texto).toLowerCase();
 
 if(texto.includes("120")) return 120;
 if(texto.includes("90")) return 90;
 if(texto.includes("60")) return 60;
 if(texto.includes("40")) return 40;
 if(texto.includes("30")) return 30;
-if(texto.includes("2")) return 120;
-if(texto.includes("1")) return 60;
 
 return 60;
 
 }
 
 /* =========================================
-FORMATO VISUAL HORA
+FORMATO HORA
 ========================================= */
 function formatoHora(hora){
 
-let [h,m] =
-hora.split(":");
+let [h,m] = hora.split(":");
 
 h = Number(h);
 
-let ampm =
-h >= 12 ? "PM" : "AM";
+let ampm = h >= 12 ? "PM" : "AM";
 
-let hora12 =
-h % 12;
+let hora12 = h % 12;
 
-if(hora12 === 0){
-hora12 = 12;
-}
+if(hora12 === 0) hora12 = 12;
 
 return hora12 + ":" + m + " " + ampm;
 
 }
 
 /* =========================================
-ACTUALIZAR CAMPOS VISUALES
+ACTUALIZAR VISTA
 ========================================= */
 function actualizarVista(){
 
-/* Mostrar servicios */
 document.getElementById("servicio").value =
-serviciosElegidos
-.map(s => s.nombre)
-.join(" + ");
+serviciosElegidos.map(s=>s.nombre).join(" + ");
 
-/* Mostrar duración */
 document.getElementById("duracion").value =
 duracionTotal + " min + trayecto";
+
+actualizarPago();
 
 }
 
 /* =========================================
-CARGAR SERVICIO INICIAL
+CALCULAR PAGO
+========================================= */
+function actualizarPago(){
+
+let total = 0;
+
+/* Servicio principal */
+const precioPrincipal =
+Number(localStorage.getItem("precio") || 0);
+
+if(serviciosElegidos.length > 0){
+total += precioPrincipal;
+}
+
+/* Extras */
+for(let i=1; i<serviciosElegidos.length; i++){
+
+const nombre = serviciosElegidos[i].nombre;
+
+const encontrado =
+serviciosFirebase.find(
+s => s.nombre === nombre
+);
+
+if(encontrado){
+total += Number(encontrado.precio);
+}
+
+}
+
+const anticipo =
+Math.round(total * 0.20);
+
+const saldo =
+total - anticipo;
+
+/* Guardar global */
+totalGeneral = total;
+anticipoGeneral = anticipo;
+saldoGeneral = saldo;
+
+/* Mostrar */
+const boxTotal =
+document.getElementById("valorTotal");
+
+const boxAnticipo =
+document.getElementById("anticipo");
+
+const boxSaldo =
+document.getElementById("saldo");
+
+if(boxTotal){
+boxTotal.innerText =
+"Valor total: $" +
+total.toLocaleString();
+}
+
+if(boxAnticipo){
+boxAnticipo.innerText =
+"Anticipo (20%): $" +
+anticipo.toLocaleString();
+}
+
+if(boxSaldo){
+boxSaldo.innerText =
+"Saldo restante: $" +
+saldo.toLocaleString();
+}
+
+}
+
+/* =========================================
+SERVICIO PRINCIPAL
 ========================================= */
 function cargarPrincipal(){
 
-/* Leer localStorage */
 const nombre =
 localStorage.getItem("servicio") || "";
 
 const duracion =
 localStorage.getItem("duracion") || "60";
 
-/* Convertir duración */
 const minutos =
 obtenerMinutos(duracion);
 
-/* Guardar servicio inicial */
+if(nombre){
+
 serviciosElegidos.push({
 nombre:nombre,
 minutos:minutos
 });
 
-/* Sumar duración */
 duracionTotal += minutos;
 
-/* Refrescar vista */
 actualizarVista();
 
 }
 
+}
+
 /* =========================================
-CARGAR SERVICIOS EXTRA
+SERVICIOS EXTRA
 ========================================= */
 async function cargarServicios(){
 
 const select =
 document.getElementById("otroServicio");
 
-/* Consultar colección */
 const snap =
-await getDocs(
-collection(db,"servicios")
-);
+await getDocs(collection(db,"servicios"));
 
-/* Recorrer servicios */
 snap.forEach(docSnap=>{
 
-const servicio =
-docSnap.data();
+const s = docSnap.data();
 
-/* Guardar array */
-serviciosFirebase.push(servicio);
+serviciosFirebase.push(s);
 
-/* Agregar option */
+if(select){
+
 select.innerHTML += `
-<option value="${servicio.nombre}">
-${servicio.nombre}
+<option value="${s.nombre}">
+${s.nombre}
 </option>
 `;
 
+}
+
 });
+
+actualizarPago();
 
 }
 
 /* =========================================
-AGREGAR SERVICIO EXTRA
+AGREGAR EXTRA
 ========================================= */
 window.agregarServicioExtra = ()=>{
 
 const nombre =
 document.getElementById("otroServicio").value;
 
-/* Validar selección */
 if(!nombre){
-
-alert(
-"Selecciona un servicio ⚠️"
-);
-
+alert("Selecciona un servicio ⚠️");
 return;
-
 }
 
-/* Máximo 3 */
 if(serviciosElegidos.length >= 3){
-
-alert(
-"Máximo 3 servicios 💖"
-);
-
+alert("Máximo 3 servicios 💖");
 return;
-
 }
 
-/* Evitar repetidos */
 const repetido =
 serviciosElegidos.some(
 s => s.nombre === nombre
 );
 
 if(repetido){
-
-alert(
-"Ese servicio ya fue agregado ⚠️"
-);
-
+alert("Ese servicio ya fue agregado ⚠️");
 return;
-
 }
 
-/* Buscar servicio */
 const encontrado =
 serviciosFirebase.find(
 s => s.nombre === nombre
 );
 
-/* Obtener duración */
-const minutos =
-obtenerMinutos(
-encontrado.duracion
-);
+if(!encontrado) return;
 
-/* Agregar */
+const minutos =
+obtenerMinutos(encontrado.duracion);
+
 serviciosElegidos.push({
 nombre:nombre,
 minutos:minutos
 });
 
-/* Sumar tiempo */
 duracionTotal += minutos;
 
-/* Actualizar */
 actualizarVista();
 
-/* Si ya eligió fecha */
 const fecha =
 document.getElementById("fecha").value;
 
@@ -271,59 +296,59 @@ document.getElementById("fecha").value;
 const select =
 document.getElementById("hora");
 
-/* Reset select */
 select.innerHTML =
 `<option value="">⏰ Selecciona hora</option>`;
 
-/* Sin fecha */
 if(!fecha) return;
 
-/* Tiempo total */
 const totalMin =
-duracionTotal +
-trayectoMin;
+duracionTotal + trayectoMin;
 
-/* Consultar citas */
 const snap =
-await getDocs(
-collection(db,"citas")
-);
+await getDocs(collection(db,"citas"));
 
-/* Revisar horas */
+const hoy = new Date();
+const hoyTexto =
+hoy.toISOString().split("T")[0];
+
+const horaActualMin =
+hoy.getHours()*60 + hoy.getMinutes();
+
 horasBase.forEach(horaTexto=>{
 
 const [h,m] =
 horaTexto.split(":");
 
-/* Inicio */
 const inicioMin =
-Number(h)*60 +
-Number(m);
+Number(h)*60 + Number(m);
 
-/* Final */
 const finMin =
-inicioMin +
-totalMin;
+inicioMin + totalMin;
 
-/* Máximo 6 PM */
 if(finMin > 1080){
 return;
 }
 
-let ocupado =
-false;
+/* Si es hoy ocultar pasadas */
+if(fecha === hoyTexto){
 
-/* Comparar citas */
+if(inicioMin <= horaActualMin + 30){
+return;
+}
+
+}
+
+let ocupado = false;
+
 snap.forEach(docSnap=>{
 
-const cita =
-docSnap.data();
+const c = docSnap.data();
 
-if(cita.fecha === fecha){
+if(c.fecha === fecha){
 
 if(
-inicioMin < cita.finMin &&
-finMin > cita.inicioMin
+inicioMin < c.finMin &&
+finMin > c.inicioMin
 ){
 ocupado = true;
 }
@@ -332,7 +357,6 @@ ocupado = true;
 
 });
 
-/* Si libre */
 if(!ocupado){
 
 select.innerHTML += `
@@ -348,35 +372,30 @@ ${formatoHora(horaTexto)}
 }
 
 /* =========================================
-CARGAR DIRECCIONES USUARIO
+USUARIO + DIRECCIONES
 ========================================= */
 onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
 
-window.location.href =
-"login.html";
-
+alert("Debes iniciar sesión ⚠️");
+window.location.href = "login.html";
 return;
 
 }
 
-/* Buscar usuario */
 const snap =
 await getDoc(
 doc(db,"usuarios",user.uid)
 );
 
-/* Si existe */
 if(snap.exists()){
 
-const data =
-snap.data();
+const data = snap.data();
 
 const select =
 document.getElementById("direccion");
 
-/* Dirección 1 */
 if(data.direccion1){
 
 select.innerHTML += `
@@ -387,7 +406,6 @@ ${data.direccion1}
 
 }
 
-/* Dirección 2 */
 if(data.direccion2){
 
 select.innerHTML += `
@@ -405,8 +423,7 @@ ${data.direccion2}
 /* =========================================
 GUARDAR CITA
 ========================================= */
-window.guardarCita =
-async()=>{
+window.guardarCita = async()=>{
 
 const fecha =
 document.getElementById("fecha").value;
@@ -417,28 +434,32 @@ document.getElementById("hora").value;
 const direccion =
 document.getElementById("direccion").value;
 
-/* Validar */
-if(
-!fecha ||
-!hora ||
-!direccion
-){
+if(!fecha || !hora || !direccion){
 
-alert(
-"Completa todos los campos ⚠️"
-);
-
+alert("Completa todos los campos ⚠️");
 return;
 
 }
 
-/* Convertir hora */
+/* Validar lunes martes */
+const fechaObj =
+new Date(fecha + "T12:00:00");
+
+const dia =
+fechaObj.getDay();
+
+if(dia === 1 || dia === 2){
+
+alert("No laboramos lunes ni martes 💖");
+return;
+
+}
+
 const [h,m] =
 hora.split(":");
 
 const inicioMin =
-Number(h)*60 +
-Number(m);
+Number(h)*60 + Number(m);
 
 const finMin =
 inicioMin +
@@ -447,85 +468,58 @@ trayectoMin;
 
 try{
 
-/* Guardar Firebase */
 await addDoc(
 collection(db,"citas"),
 {
-usuario:
-auth.currentUser.email,
+usuario: auth.currentUser.email,
 
 servicio:
 serviciosElegidos
 .map(s=>s.nombre)
 .join(" + "),
 
-fecha:
 fecha,
-
-hora:
 hora,
-
-direccion:
 direccion,
 
 duracionMin:
 duracionTotal,
 
-trayectoMin:
 trayectoMin,
 
-inicioMin:
 inicioMin,
-
-finMin:
 finMin,
+
+valorTotal:
+totalGeneral,
+
+anticipo:
+anticipoGeneral,
+
+saldo:
+saldoGeneral,
+
+estadoPago:
+"pendiente",
 
 estado:
 "pendiente"
 }
 );
 
-/* Mensaje admin */
-const mensaje =
-encodeURIComponent(
-`Hola 💖 Nueva cita solicitada
+alert(
+`Para asegurar tu cita debes pagar el 20% 💖
 
-👤 ${auth.currentUser.email}
-
-💅 ${serviciosElegidos.map(s=>s.nombre).join(" + ")}
-
-📅 ${fecha}
-⏰ ${hora}
-📍 ${direccion}
-
-Revisar panel administrador ✨`
+Anticipo: $${anticipoGeneral.toLocaleString()}`
 );
 
-/* Link WhatsApp */
-const linkWhats =
-"https://wa.me/573227257705?text=" +
-mensaje;
-
-/* Mostrar pantalla final */
-document.querySelector(".container").innerHTML = `
-
-<h2>✅ Cita guardada 💖</h2>
-
-<p>
-Tu solicitud fue registrada con éxito.
-</p>
-
-<button onclick="window.open('${linkWhats}','_blank')">
-📲 Enviar WhatsApp
-</button>
-
-`;
+window.location.href =
+"mis-citas.html";
 
 }catch(error){
 
 alert(
-"Error: " +
-error.message
+"Error: " + error.message
 );
 
 }
@@ -533,27 +527,75 @@ error.message
 };
 
 /* =========================================
-EVENTO CAMBIO FECHA
+CALENDARIO PREMIUM
 ========================================= */
-document
-.getElementById("fecha")
-.addEventListener(
+const inputFecha =
+document.getElementById("fecha");
+
+if(inputFecha){
+
+const hoy = new Date();
+
+const yyyy =
+hoy.getFullYear();
+
+const mm =
+String(hoy.getMonth()+1)
+.padStart(2,"0");
+
+const dd =
+String(hoy.getDate())
+.padStart(2,"0");
+
+inputFecha.min =
+`${yyyy}-${mm}-${dd}`;
+
+inputFecha.addEventListener(
 "change",
-cargarHorasDisponibles
+()=>{
+
+const fechaSel =
+new Date(
+inputFecha.value + "T12:00:00"
 );
 
+const dia =
+fechaSel.getDay();
+
+if(dia === 1 || dia === 2){
+
+alert(
+"No laboramos lunes ni martes 💖"
+);
+
+inputFecha.value = "";
+
+document.getElementById("hora").innerHTML =
+`<option value="">⏰ Selecciona hora</option>`;
+
+return;
+
+}
+
+cargarHorasDisponibles();
+
+}
+);
+
+}
+
 /* =========================================
-BOTÓN VOLVER
+VOLVER
 ========================================= */
 window.volver = ()=>{
 
 window.location.href =
-"index.html";
+"servicios.html";
 
 };
 
 /* =========================================
-INICIAR PÁGINA
+INICIAR
 ========================================= */
 cargarPrincipal();
 cargarServicios();
