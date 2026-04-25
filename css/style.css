@@ -1,114 +1,162 @@
 /* =======================================================
+   GOOGLE FONTS
+======================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* =======================================================
    RESET GENERAL
 ======================================================= */
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+html{
+scroll-behavior:smooth;
+}
 
 body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:linear-gradient(135deg,#e3cfeb,#864786);
-    min-height:100vh;
-    color:#222;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#fff7fb,#f9e7f1,#f7eef9);
+min-height:100vh;
+color:#2b2b2b;
+line-height:1.5;
+overflow-x:hidden;
 }
 
-/* títulos bonitos */
-h1,
-h2,
-h3,
-p,
-input,
-button,
-.titulo,
-.saludo{
-    font-family:'Great Vibes', cursive;
-    font-weight:normal;
-    font-size:36px;
-    line-height:1.5;
-    letter-spacing:1px;
-    color:#222;
+/* =======================================================
+   TIPOGRAFÍA
+======================================================= */
+h1,h2,h3,.titulo,.logo,.logo-footer{
+font-family:'Great Vibes',cursive;
+font-weight:400;
+letter-spacing:1px;
+color:#a14d76;
+}
+
+h1{
+font-size:46px;
+line-height:1.2;
+color:#b04f7e;
+text-shadow:0 1px 1px rgba(0,0,0,.03);
+}
+h2{font-size:42px;}
+h3{font-size:30px;}
+
+p,a,label,input,textarea,select,button{
+font-family:'Poppins',sans-serif;
+}
+
+/* =======================================================
+   LINKS
+======================================================= */
+a{
+text-decoration:none;
+color:#c76b9a;
+font-weight:600;
+transition:.3s;
+}
+
+a:hover{
+color:#9f4d77;
 }
 
 /* =======================================================
    HEADER
 ======================================================= */
 .header{
-    background:linear-gradient(45deg,#ff3ea5,#ff0080);
-    color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
+padding:18px 24px;
 
-    padding:15px 20px;
+background:rgba(255,255,255,.75);
+backdrop-filter:blur(12px);
+
+border-bottom:1px solid rgba(255,255,255,.4);
+box-shadow:0 10px 25px rgba(199,107,154,.08);
 }
 
 .logo{
-    font-size:22px;
-    font-weight:bold;
+font-size:40px;
 }
 
 .menu{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:center;
-}
-
-.menu a{
-    color:white;
-    text-decoration:none;
-    font-weight:bold;
+display:flex;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
 }
 
 /* =======================================================
-   BOTONES HEADER
+   BOTONES GLOBALES
 ======================================================= */
-.btn-outline{
-    background:transparent;
-    border:1px solid white;
-    color:white;
-    padding:10px 14px;
-    border-radius:20px;
-    cursor:pointer;
+button,
+.btn-outline,
+.btn-solid{
+height:48px;
+padding:0 18px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-size:15px;
+font-weight:600;
+transition:.25s;
+display:inline-flex;
+align-items:center;
+justify-content:center;
 }
 
+button:hover,
+.btn-outline:hover,
+.btn-solid:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+/* botón principal */
+button,
 .btn-solid{
-    background:white;
-    border:none;
-    color:#ff0080;
-    padding:10px 14px;
-    border-radius:20px;
-    cursor:pointer;
+background:linear-gradient(135deg,#f4b5c9,#d68ab0);
+color:white;
+}
+
+/* botón transparente */
+.btn-outline{
+background:white;
+border:1px solid #e8bfd3;
+color:#b85d8d;
 }
 
 /* =======================================================
-   TITULOS
+   TITULOS CENTRADOS
 ======================================================= */
 .titulo{
-    text-align:center;
-    margin:25px 10px;
-    font-size:32px;
-    font-weight:bold;
+text-align:center;
+margin:30px 10px;
+font-size:48px;
 }
 
 /* =======================================================
-   CONTENEDOR FORMULARIOS
+   CONTENEDORES
 ======================================================= */
-.container{
-    width:95%;
-    max-width:450px;
-    text-align: center;
-    margin:25px auto;
-    background:white;
-    padding:25px;
-    border-radius:22px;
-    box-shadow:0 10px 25px rgba(0,0,0,.10);
+.container,
+.admin-box{
+width:95%;
+max-width:480px;
+margin:30px auto;
+padding:28px;
+border-radius:24px;
+
+background:rgba(255,255,255,.92);
+backdrop-filter:blur(12px);
+
+box-shadow:0 18px 35px rgba(199,107,154,.12);
+text-align:center;
 }
 
 /* =======================================================
@@ -117,458 +165,305 @@ button,
 input,
 textarea,
 select{
-    width:100%;
-    padding:14px;
-    margin:10px 0;
+width:100%;
+padding:14px 16px;
+margin:10px 0;
 
-    border:1px solid #ddd;
-    border-radius:14px;
+border:1px solid #edd7e2;
+border-radius:14px;
+outline:none;
 
-    font-size:15px;
-    outline:none;
+font-size:15px;
+background:white;
+color:#333;
+
+transition:.25s;
 }
 
 input:focus,
 textarea:focus,
 select:focus{
-    border-color:#ff0080;
+border-color:#d68ab0;
+box-shadow:0 0 0 4px rgba(214,138,176,.10);
 }
 
 textarea{
-    resize:none;
-    min-height:130px;
+resize:none;
+min-height:130px;
 }
 
 /* =======================================================
-   BOTONES GENERALES
+   PASSWORD BOX
 ======================================================= */
-button{
-    width:100%;
-    padding:14px;
-    margin-top:12px;
-
-    border:none;
-    border-radius:14px;
-
-    background:linear-gradient(45deg,#ff3ea5,#916783);
-    color:white;
-
-    font-size:16px;
-    cursor:pointer;
+.pass-box{
+position:relative;
+width:100%;
 }
 
-button:hover{
-    opacity:.92;
+.pass-real{
+padding-right:90px;
+}
+
+.eye-real{
+position:absolute;
+right:14px;
+top:50%;
+transform:translateY(-50%);
+font-size:14px;
+font-weight:600;
+color:#b85d8d;
+cursor:pointer;
+user-select:none;
 }
 
 /* =======================================================
-   LINKS
+   BOTÓN VOLVER
 ======================================================= */
-a{
-    color:#ff0080;
-    text-decoration:none;
-    font-weight:bold;
+.btn-volver-float,
+.btn-subir-admin{
+position:fixed;
+bottom:18px;
+width:56px;
+height:56px;
+border-radius:50%;
+z-index:999;
+font-size:22px;
+box-shadow:0 12px 25px rgba(0,0,0,.15);
 }
 
-p{
-    margin-top:10px;
-    line-height:1.5;
+.btn-volver-float{
+right:18px;
+background:linear-gradient(135deg,#f4b5c9,#d68ab0);
+color:white;
+}
+
+.btn-subir-admin{
+left:18px;
+background:linear-gradient(135deg,#e6c2d4,#d4a4c0);
+color:white;
 }
 
 /* =======================================================
-   SERVICIOS.HTML  (CARDS INICIO)
+   TARJETAS SERVICIOS / CATEGORÍAS
 ======================================================= */
 .contenedor-categorias{
-    width:95%;
-    max-width:1100px;
-    margin:25px auto;
+width:95%;
+max-width:1200px;
+margin:30px auto;
 
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:22px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:24px;
 }
 
-.card{
-    background:white;
-    padding:16px;
-    border-radius:22px;
-    box-shadow:0 8px 18px rgba(15, 15, 15, 0.925);
-    text-align:center;
-    /* animación suave */
-    transition: all .50s ease;
+.card,
+.servicio,
+.mis-cita-card,
+.admin-card{
+background:rgba(255,255,255,.95);
+border-radius:24px;
+padding:22px;
+text-align:center;
 
-    cursor:pointer;
+box-shadow:0 18px 35px rgba(199,107,154,.10);
+transition:.25s;
 }
-/* efecto hover */
-.card:hover{
 
-    /* subir tarjeta */
-    transform: translateY(-10px) scale(1.03);
-
-    /* sombra más fuerte */
-    box-shadow:0 18px 28px #610b83cb;
-
+.card:hover,
+.servicio:hover,
+.mis-cita-card:hover,
+.admin-card:hover{
+transform:translateY(-6px);
+box-shadow:0 22px 38px rgba(199,107,154,.18);
 }
 
 .card img{
-    width:100%;
-    height:200px;
-    object-fit:cover;
-    border-radius:18px;
-    }
-/* zoom imagen */
-.card:hover img{
-    transform: scale(1.05);
-}    
-
-.card h3{
-    margin:14px 0;
-    font-size:17px;
-    min-height:45px;
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:18px;
+margin-bottom:14px;
 }
 
-/* =======================================================
-   CATEGORIA.HTML (SERVICIOS BONITOS)
-======================================================= */
-#listaServicios{
-    width:95%;
-    max-width:550px;
-    margin:30px auto;
-
-    display:flex;
-    flex-direction:column;
-    gap:24px;
+.card h3,
+.servicio h3,
+.mis-cita-card h3,
+.admin-card h3{
+font-size:28px;
+margin-bottom:10px;
 }
 
-/* tarjeta individual */
-.servicio{
-    background:white;
-    padding:25px;
-    border-radius:22px;
-    box-shadow:0 8px 18px rgba(0,0,0,.10);
-    text-align:center;
-}
-.servicio:hover{
-
-    /* subir tarjeta */
-    transform: translateY(-10px) scale(1.03);
-
-    /* sombra más fuerte */
-    box-shadow:0 18px 28px #610b83cb;
-
-}
-
-/* nombre */
-.servicio h3{
-    font-size:24px;
-    margin-bottom:15px;
-    color:#222;
-}
-
-/* textos */
-.servicio p{
-    margin:8px 0;
-    font-size:18px;
-}
-
-/* primer párrafo = precio */
-.servicio p:first-of-type{
-    color:#ff0080;
-    font-size:22px;
-    font-weight:bold;
-}
-
-/* botón agendar */
-.servicio button{
-    margin-top:15px;
-}
-
-/* ======================================================
-   SOLO PARA MIS CITAS
-====================================================== */
-
-.mis-citas-wrap{
-    width: 95%;
-    max-width: 520px;
-    margin: 20px auto 90px auto;
-}
-
-.mis-citas-grid{
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-}
-
-.mis-cita-card{
-    background: white;
-    padding: 25px;
-    border-radius: 22px;
-    box-shadow: 0 8px 18px rgba(0,0,0,.10);
-    text-align: center;
-}
-.mis-cita-card:hover{
-
-    /* subir tarjeta */
-    transform: translateY(-10px) scale(1.03);
-
-    /* sombra más fuerte */
-    box-shadow:0 18px 28px #610b83cb;
-
-}
-
-.mis-cita-card h3{
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #222;
-}
-
-.mis-cita-card p{
-    margin: 10px 0;
-    font-size: 17px;
+.servicio p,
+.mis-cita-card p,
+.admin-card p,
+.card p{
+font-size:15px;
+margin:8px 0;
+font-family:'Poppins',sans-serif;
 }
 
 .estado-cita{
-    color: #ff0080;
-    font-weight: bold;
-}
-
-/* botón cancelar */
-.mis-cita-card button{
-    margin-top: 15px;
-}
-
-/* móvil */
-@media(max-width:480px){
-
-    .mis-citas-wrap{
-        width: 94%;
-    }
-
-    .mis-cita-card{
-        padding: 22px;
-    }
-
-    .mis-cita-card h3{
-        font-size: 22px;
-    }
-
-    .mis-cita-card p{
-        font-size: 16px;
-    }
-
+font-weight:700;
+color:#c76b9a;
 }
 
 /* =======================================================
-   BOTON VOLVER FLOTANTE
+   LISTAS VERTICALES
 ======================================================= */
-.btn-volver-float{
-    position:fixed;
-    right:18px;
-    bottom:18px;
+#listaServicios,
+.admin-list,
+.mis-citas-grid{
+width:95%;
+max-width:560px;
+margin:25px auto;
 
-    width:55px;
-    height:55px;
-
-    border:none;
-    border-radius:50%;
-
-    background:linear-gradient(45deg,#ff3ea5,#68b2dd);
-    color:white;
-
-    font-size:22px;
-    cursor:pointer;
-
-    z-index:999;
+display:flex;
+flex-direction:column;
+gap:22px;
 }
+
+.mis-citas-wrap{
+width:95%;
+max-width:560px;
+margin:20px auto 90px;
+}
+
 /* =======================================================
-   BOTON SUBIR FLOTANTE
+   PANEL ADMIN
 ======================================================= */
-
-.btn-subir-admin{
-    position: fixed;
-    left: 18px;
-    bottom: 18px;
-
-    width: 55px;
-    height: 55px;
-
-    border-radius: 50%;
-    background:linear-gradient(45deg,#ff3ea5,#68b2dd);
-    color: white;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    text-decoration: none;
-    font-size: 24px;
-    z-index: 999;
-}
-
-/* ======================================================
-   SOLO PANEL ADMIN
-   PEGAR AL FINAL DE TU style.css ACTUAL
-====================================================== */
-
-.admin-box{
-    width:95%;
-    max-width:500px;
-    margin:25px auto;
-    background:white;
-    padding:25px;
-    border-radius:22px;
-    box-shadow:0 8px 18px rgba(0,0,0,.10);
-    text-align:center;
-}
-
-.admin-list{
-    width:95%;
-    max-width:500px;
-    margin:20px auto;
-
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-}
-
-.admin-card{
-    background:white;
-    padding:25px;
-    border-radius:22px;
-    box-shadow:0 8px 18px rgba(0,0,0,.10);
-    text-align:center;
-}
-
-.admin-card h3{
-    font-size:24px;
-    margin-bottom:12px;
-}
-
-.admin-card p{
-    margin:8px 0;
-    font-size:16px;
-}
-
-/* Botones aprobar */
 .admin-list.citas .admin-card button:first-of-type{
-    background:linear-gradient(45deg,#00b894,#00a86b);
+background:linear-gradient(135deg,#7fd6b3,#4fbf94);
 }
 
-/* Botones rechazar */
 .admin-list.citas .admin-card button:last-of-type{
-    background:linear-gradient(45deg,#ff4d6d,#ff1744);
+background:linear-gradient(135deg,#f4a4b6,#ea5b7d);
 }
 
+/* =======================================================
+   FOOTER PREMIUM
+======================================================= */
+.footer{
+margin-top:60px;
+padding:45px 20px 15px;
 
-/* Responsive */
-@media(max-width:480px){
+background:linear-gradient(135deg,#d18bab,#b96b93);
+color:white;
+}
 
-    .admin-box,
-    .admin-list{
-        width:94%;
-    }
+.footer-content{
+max-width:1200px;
+margin:auto;
 
-    .admin-card{
-        padding:20px;
-    }
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:30px;
+}
 
-    .admin-card h3{
-        font-size:22px;
-    }
+.footer-section h3{
+font-family:'Poppins',sans-serif;
+font-size:18px;
+margin-bottom:14px;
+color:#fff7fb;
+}
+
+.footer-section p{
+font-size:14px;
+margin:7px 0;
+color:#fff0f7;
+}
+
+.logo-footer{
+font-size:42px;
+color:white;
+margin-bottom:10px;
+}
+
+.footer-bottom{
+text-align:center;
+margin-top:28px;
+padding-top:18px;
+border-top:1px solid rgba(255,255,255,.2);
+font-size:13px;
+color:#fff0f7;
 }
 
 /* =======================================================
    RESPONSIVE TABLET
 ======================================================= */
-@media (max-width: 900px){
+@media(max-width:900px){
 
 .header{
-    padding: 15px;
-}
-
-.menu{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-}
-
-.menu a,
-.menu button{
-
-    font-size: 15px;
-    padding: 10px 14px;
-
-    width: auto;
-    min-width: auto;
-
+justify-content:center;
+text-align:center;
 }
 
 .logo{
-    width: 100%;
-    text-align: center;
-    margin-bottom: 12px;
+width:100%;
 }
 
-body{
-    overflow-x: hidden;
+.menu{
+justify-content:center;
+}
+
+.titulo{
+font-size:40px;
 }
 
 }
+
 /* =======================================================
    RESPONSIVE CELULAR
 ======================================================= */
 @media(max-width:480px){
 
-    .titulo{
-        font-size:24px;
-    }
+h1{font-size:42px;}
+h2{font-size:34px;}
+h3{font-size:24px;}
 
-    .logo{
-        font-size:20px;
-    }
+.titulo{
+font-size:34px;
+margin:25px 10px;
+}
 
-    .menu{
-        width:100%;
-        flex-direction:column;
-    }
+.container,
+.admin-box,
+.card,
+.servicio,
+.mis-cita-card,
+.admin-card{
+padding:20px;
+}
 
-    .menu a,
-    .menu button{
-        width:100%;
-        text-align:center;
-    }
+.menu{
+flex-direction:column;
+width:100%;
+}
 
-    .contenedor-categorias{
-        grid-template-columns:1fr;
-    }
+.menu a,
+.menu button,
+.btn-outline,
+.btn-solid{
+width:100%;
+}
 
-    .card img{
-        height:220px;
-    }
+.card img{
+height:200px;
+}
 
-    .card h3{
-        font-size:18px;
-    }
+.btn-volver-float,
+.btn-subir-admin{
+width:52px;
+height:52px;
+font-size:20px;
+}
 
-    .servicio{
-        padding:20px;
-    }
+.footer{
+padding:35px 15px 15px;
+}
 
-    .servicio h3{
-        font-size:21px;
-    }
+.footer-content{
+grid-template-columns:1fr;
+text-align:center;
+}
 
-    .servicio p{
-        font-size:17px;
-    }
-
-    .servicio p:first-of-type{
-        font-size:20px;
-    }
-
-    .btn-volver-float{
-        width:52px;
-        height:52px;
-    }
 }
