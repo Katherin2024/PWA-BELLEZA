@@ -1,142 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Login</title>
+
 <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
 
-<button class="btn-volver-float" onclick="volver()">⬅</button>
+<button
+class="btn-volver-float"
+onclick="volver()">
+⬅
+</button>
 
 <div class="container">
 
 <h1>Iniciar Sesión 💖</h1>
 
-<input type="email" id="email" placeholder="Correo electrónico">
+<input
+type="email"
+id="email"
+placeholder="Correo electrónico">
 
-<input type="password" id="password" placeholder="Contraseña" class="pass-real" >
+<input
+type="password"
+id="password"
+placeholder="Contraseña"
+class="pass-real">
 
-<span class="eye-real" onclick="mostrarClave()"> 👁️Ver</span>
+<span
+class="eye-real"
+onclick="mostrarClave()">
+👁️Ver
+</span>
 
-<button onclick="iniciarSesion()">Ingresar</button>
+<button onclick="iniciarSesion()">
+Ingresar
+</button>
 
 <p>
 ¿No tienes cuenta?
-<a href="registro.html">Regístrate</a>
+<a href="registro.html">
+Regístrate
+</a>
 </p>
 
 <p>
-<a href="#" onclick="recuperarPassword()">
+<a href="#"
+onclick="recuperarPassword()">
 ¿Olvidaste tu contraseña?
 </a>
 </p>
 
 </div>
 
-<script type="module">
-
-import {
-getAuth,
-signInWithEmailAndPassword,
-sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-getDoc
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-import { app } from "./js/firebase-config.js";
-
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-/* Mostrar clave */
-window.mostrarClave = () => {
-
-const pass = document.getElementById("password");
-
-pass.type =
-pass.type === "password"
-? "text"
-: "password";
-
-};
-
-/* Login */
-window.iniciarSesion = async () => {
-
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-if(!email || !password){
-alert("Completa los campos ⚠️");
-return;
-}
-
-try{
-
-const userCredential =
-await signInWithEmailAndPassword(auth,email,password);
-
-const user = userCredential.user;
-
-const docSnap =
-await getDoc(doc(db,"usuarios",user.uid));
-
-if(docSnap.exists()){
-
-const data = docSnap.data();
-
-if(data.rol === "admin"){
-window.location.href="admin.html";
-}else{
-window.location.href="index.html";
-}
-
-}
-
-}catch(error){
-
-alert("Error: " + error.message);
-
-}
-
-};
-
-/* Recuperar contraseña */
-window.recuperarPassword = async () => {
-
-const email = document.getElementById("email").value;
-
-if(!email){
-alert("Ingresa tu correo primero 📧");
-return;
-}
-
-try{
-
-await sendPasswordResetEmail(auth,email);
-
-alert("Correo enviado 💌");
-
-}catch(error){
-
-alert("Error: " + error.message);
-
-}
-
-};
-
-window.volver = () => {
-window.location.href="index.html";
-};
-
-</script>
+<!-- JS EXTERNO -->
+<script type="module" src="js/login.js"></script>
 
 </body>
 </html>

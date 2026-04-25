@@ -14,257 +14,29 @@
 <body>
 
 <!-- BOTÓN VOLVER -->
-<button class="btn-volver-float" onclick="volver()">⬅</button>
+<button
+class="btn-volver-float"
+onclick="volver()">
+⬅
+</button>
 
 <!-- TÍTULO -->
-<h2 class="titulo">Mis citas 💖</h2>
+<h2 class="titulo">
+Mis citas 💖
+</h2>
 
 <!-- CONTENEDOR -->
 <div class="mis-citas-wrap">
 
-<div id="listaCitas" class="mis-citas-grid"></div>
+<div
+id="listaCitas"
+class="mis-citas-grid">
+</div>
 
 </div>
 
-<script type="module">
-
-/* =========================================
-FIREBASE
-========================================= */
-import {
-getFirestore,
-collection,
-getDocs,
-deleteDoc,
-updateDoc,
-doc,
-getDoc
-}
-from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-import {
-getAuth,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
-import { app }
-from "./js/firebase-config.js";
-
-/* =========================================
-INICIALIZAR
-========================================= */
-const db =
-getFirestore(app);
-
-const auth =
-getAuth(app);
-
-/* =========================================
-CARGAR CITAS
-========================================= */
-async function cargarCitas(user){
-
-const contenedor =
-document.getElementById("listaCitas");
-
-const snap =
-await getDocs(
-collection(db,"citas")
-);
-
-let html = "";
-
-snap.forEach(docSnap=>{
-
-const cita =
-docSnap.data();
-
-const id =
-docSnap.id;
-
-if(cita.usuario === user.email){
-
-html += `
-<div class="mis-cita-card">
-
-<h3>${cita.servicio}</h3>
-
-<p>📅 ${cita.fecha}</p>
-
-<p>⏰ ${cita.hora}</p>
-
-<p>📍 ${cita.direccion}</p>
-
-<p class="estado-cita">
-Estado:
-${cita.estado || "pendiente"}
-</p>
-
-<button
-onclick="editarDireccion('${id}')">
-Cambiar dirección 📍
-</button>
-
-<button
-onclick="cancelarCita('${id}')">
-Cancelar ❌
-</button>
-
-</div>
-`;
-
-}
-
-});
-
-if(html === ""){
-
-html = `
-<div class="mis-cita-card">
-
-<h3>No tienes citas 💔</h3>
-
-<p>
-Agenda una nueva cita cuando quieras.
-</p>
-
-</div>
-`;
-
-}
-
-contenedor.innerHTML =
-html;
-
-}
-
-/* =========================================
-VALIDAR LOGIN
-========================================= */
-onAuthStateChanged(auth,(user)=>{
-
-if(!user){
-
-window.location.href =
-"login.html";
-
-return;
-
-}
-
-cargarCitas(user);
-
-});
-
-/* =========================================
-EDITAR DIRECCIÓN
-========================================= */
-window.editarDireccion =
-async(id)=>{
-
-const user =
-auth.currentUser;
-
-const snap =
-await getDoc(
-doc(db,"usuarios",user.uid)
-);
-
-if(!snap.exists()) return;
-
-const data =
-snap.data();
-
-let opciones = [];
-
-if(data.direccion1){
-opciones.push(data.direccion1);
-}
-
-if(data.direccion2){
-opciones.push(data.direccion2);
-}
-
-if(opciones.length === 0){
-
-alert(
-"No tienes direcciones guardadas"
-);
-
-return;
-
-}
-
-const nueva =
-prompt(
-"Escribe exactamente una de estas direcciones:\n\n" +
-opciones.join("\n")
-);
-
-if(!nueva) return;
-
-if(!opciones.includes(nueva)){
-
-alert(
-"Dirección no válida ⚠️"
-);
-
-return;
-
-}
-
-await updateDoc(
-doc(db,"citas",id),
-{
-direccion:nueva
-}
-);
-
-alert(
-"Dirección actualizada 💖"
-);
-
-location.reload();
-
-};
-
-/* =========================================
-CANCELAR CITA
-========================================= */
-window.cancelarCita =
-async(id)=>{
-
-const confirmar =
-confirm(
-"¿Cancelar esta cita?"
-);
-
-if(!confirmar) return;
-
-await deleteDoc(
-doc(db,"citas",id)
-);
-
-alert(
-"Cita cancelada 💔"
-);
-
-location.reload();
-
-};
-
-/* =========================================
-VOLVER
-========================================= */
-window.volver = ()=>{
-
-window.location.href =
-"index.html";
-
-};
-
-</script>
+<!-- JS EXTERNO -->
+<script type="module" src="js/citas.js"></script>
 
 </body>
-</html>>
+</html>

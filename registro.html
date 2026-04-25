@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Registro</title>
+
 <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -13,22 +17,47 @@
 
 <h1>Crear Cuenta 💖</h1>
 
-<input type="text" id="nombre" placeholder="Nombre completo">
+<input
+type="text"
+id="nombre"
+placeholder="Nombre completo">
 
-<input type="email" id="email" placeholder="Correo electrónico">
+<input
+type="email"
+id="email"
+placeholder="Correo electrónico">
 
-<input type="password" id="password" placeholder="Contraseña">
+<!-- CONTRASEÑA -->
+<div class="pass-box">
 
-<label>
-<input type="checkbox" onclick="mostrarClave()">
-Mostrar contraseña
-</label>
+<input
+type="password"
+id="password"
+placeholder="Contraseña"
+class="pass-real">
 
-<input type="text" id="telefono" placeholder="Teléfono">
+<span
+class="eye-real"
+onclick="mostrarClave()">
+👁️ Ver
+</span>
 
-<input type="text" id="direccion1" placeholder="Dirección principal">
+</div>
 
-<input type="text" id="direccion2" placeholder="Dirección opcional">
+<input
+type="text"
+id="telefono"
+placeholder="Teléfono">
+
+<input
+type="text"
+id="direccion1"
+placeholder="Dirección principal">
+
+<input
+type="text"
+id="direccion2"
+placeholder="Dirección opcional">
 
 <button onclick="registrarUsuario()">
 Registrarse
@@ -36,89 +65,14 @@ Registrarse
 
 <p>
 ¿Ya tienes cuenta?
-<a href="login.html">Iniciar sesión</a>
+<a href="login.html">
+Iniciar sesión
+</a>
 </p>
 
 </div>
 
-<script type="module">
-
-import {
-getAuth,
-createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-setDoc
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-import { app } from "./js/firebase-config.js";
-
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-/* Mostrar clave */
-window.mostrarClave = () => {
-
-const pass = document.getElementById("password");
-
-pass.type =
-pass.type === "password"
-? "text"
-: "password";
-
-};
-
-/* Registro */
-window.registrarUsuario = async () => {
-
-const nombre = document.getElementById("nombre").value;
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-const telefono = document.getElementById("telefono").value;
-const direccion1 = document.getElementById("direccion1").value;
-const direccion2 = document.getElementById("direccion2").value;
-
-if(!nombre || !email || !password || !telefono || !direccion1){
-alert("Completa todos los campos ⚠️");
-return;
-}
-
-if(password.length < 6){
-alert("Mínimo 6 caracteres 🔒");
-return;
-}
-
-try{
-
-const userCredential =
-await createUserWithEmailAndPassword(auth,email,password);
-
-const user = userCredential.user;
-
-await setDoc(doc(db,"usuarios",user.uid),{
-nombre,
-email,
-telefono,
-direccion1,
-direccion2
-});
-
-alert("Registro exitoso 💖");
-
-window.location.href="login.html";
-
-}catch(error){
-
-alert("Error: " + error.message);
-
-}
-
-};
-
-</script>
+<script type="module" src="js/registro.js"></script>
 
 </body>
 </html>

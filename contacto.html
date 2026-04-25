@@ -17,154 +17,76 @@
 <!-- FORMULARIO -->
 <div class="container">
 
-    <h2>Contáctanos 💖</h2>
+<h2>Contáctanos 💖</h2>
 
-    <!-- Nombre -->
-    <input
-        type="text"
-        id="nombre"
-        placeholder="Nombre completo"
-    >
+<input
+type="text"
+id="nombre"
+placeholder="Nombre completo">
 
-    <!-- Correo -->
-    <input
-        type="email"
-        id="correo"
-        placeholder="Correo electrónico"
-    >
+<input
+type="email"
+id="correo"
+placeholder="Correo electrónico">
 
-    <!-- Mensaje -->
-    <textarea
-        id="mensaje"
-        placeholder="Escribe tu mensaje..."
-    ></textarea>
+<textarea
+id="mensaje"
+placeholder="Escribe tu mensaje..."></textarea>
 
-    <!-- Botón -->
-    <button onclick="enviarMensaje()">
-        Enviar
-    </button>
+<button onclick="enviarMensaje()">
+Enviar
+</button>
 
 </div>
 
 <!-- BOTÓN VOLVER -->
 <button class="btn-volver-float" onclick="volver()">⬅</button>
 
-<!-- FIREBASE -->
-<script type="module">
-
-/* ======================================================
-   IMPORTAR FIREBASE
-====================================================== */
-import {
-    getFirestore,
-    collection,
-    addDoc
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-import { app } from "./js/firebase-config.js";
-
-/* ======================================================
-   INICIALIZAR
-====================================================== */
-const db = getFirestore(app);
-
-/* ======================================================
-   ENVIAR MENSAJE
-====================================================== */
-window.enviarMensaje = async () => {
-
-    const nombre =
-    document.getElementById("nombre").value.trim();
-
-    const correo =
-    document.getElementById("correo").value.trim();
-
-    const mensaje =
-    document.getElementById("mensaje").value.trim();
-
-    /* Validar */
-    if(!nombre || !correo || !mensaje){
-
-        alert("Completa todos los campos ⚠️");
-        return;
-    }
-
-    try{
-
-        await addDoc(collection(db,"contactos"),{
-
-            nombre: nombre,
-            correo: correo,
-            mensaje: mensaje,
-            fecha: new Date().toLocaleDateString(),
-            hora: new Date().toLocaleTimeString()
-
-        });
-
-        alert("Mensaje enviado con éxito 💖");
-
-        /* Limpiar formulario */
-        document.getElementById("nombre").value = "";
-        document.getElementById("correo").value = "";
-        document.getElementById("mensaje").value = "";
-
-    }catch(error){
-
-        alert("Error: " + error.message);
-
-    }
-
-};
-
-/* ======================================================
-   VOLVER
-====================================================== */
-window.volver = () => {
-
-    window.location.href = "index.html";
-
-};
-
-</script>
+<!-- JS EXTERNO -->
+<script type="module" src="js/contacto.js"></script>
 
 <!-- FOOTER -->
 <footer class="footer">
 
-    <div class="footer-content">
+<div class="footer-content">
 
-        <div class="footer-section">
-            <div class="logo-footer">💅Belleza</div>
+<div class="footer-section">
 
-            <p>
-                Realzando tu belleza natural con los mejores profesionales y productos de alta calidad.
-            </p>
-        </div>
+<div class="logo-footer">
+💅Belleza
+</div>
 
-        <div class="footer-section">
+<p>
+Realzando tu belleza natural con los mejores profesionales y productos de alta calidad.
+</p>
 
-            <h3>Horarios de Atención</h3>
+</div>
 
-            <p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
-            <p>Sábados: 10:00 AM - 4:00 PM</p>
-            <p>Domingos: Cerrado</p>
+<div class="footer-section">
 
-        </div>
+<h3>Horarios de Atención</h3>
 
-        <div class="footer-section">
+<p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
+<p>Sábados: 10:00 AM - 4:00 PM</p>
+<p>Domingos: Cerrado</p>
 
-            <h3>Contacto</h3>
+</div>
 
-            <p>📍 Calle Belleza #123</p>
-            <p>📞 +123 456 7890</p>
-            <p>✉️ contacto@pwabelleza.com</p>
+<div class="footer-section">
 
-        </div>
+<h3>Contacto</h3>
 
-    </div>
+<p>📍 Calle Belleza #123</p>
+<p>📞 +123 456 7890</p>
+<p>✉️ contacto@pwabelleza.com</p>
 
-    <div class="footer-bottom">
-        &copy; 2026 Belleza - Todos los derechos reservados
-    </div>
+</div>
+
+</div>
+
+<div class="footer-bottom">
+&copy; 2026 Belleza - Todos los derechos reservados
+</div>
 
 </footer>
 

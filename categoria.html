@@ -4,109 +4,24 @@
 
 <meta charset="UTF-8">
 <title>Categoría</title>
-<link rel="stylesheet" href="css/style.css">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
 <body>
 
-<!-- BOTÓN VOLVER FLOTANTE -->
+<!-- BOTÓN VOLVER -->
 <button class="btn-volver-float" onclick="volver()">⬅</button>
 
 <h2 id="titulo" class="titulo"></h2>
 
 <div id="listaServicios"></div>
 
-<script type="module">
-
-import { 
-  getFirestore, 
-  collection, 
-  getDocs 
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-import { app } from "./js/firebase-config.js";
-
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-// 🔥 Obtener categoría
-const categoria = localStorage.getItem("categoria");
-
-// 🔥 TÍTULOS DINÁMICOS
-const titulo = document.getElementById("titulo");
-
-if(categoria === "uñas") titulo.innerText = "💅 Tratamientos de manos y pies";
-if(categoria === "depilacion") titulo.innerText = "🪒 Depilación facial y corporal";
-if(categoria === "cejas") titulo.innerText = "👁️ Tratamientos de cejas";
-if(categoria === "pestañas") titulo.innerText = "✨ Tratamientos de pestañas";
-
-// 🔥 TRAER DATOS
-const querySnapshot = await getDocs(collection(db, "servicios"));
-
-let html = "";
-
-// 🔥 FILTRAR
-querySnapshot.forEach(doc => {
-
-  const s = doc.data();
-
-  if (s.categoria === categoria) {
-
-    html += `
-      <div class="servicio">
-        <h3>${s.nombre}</h3>
-        <p>💰 $${s.precio}</p>
-        <p>⏱ ${s.duracion}</p>
-
-        <button onclick="agendar(
-        '${s.nombre}',
-        '${s.duracion}',
-        '${s.precio}'
-        )">
-        Agendar
-        </button>
-      </div>
-    `;
-  }
-
-});
-
-// Si no hay servicios
-if(html === ""){
-  html = "<p style='text-align:center;'>No hay servicios disponibles 💔</p>";
-}
-
-document.getElementById("listaServicios").innerHTML = html;
-
-// 🔐 VALIDACIÓN LOGIN
-window.agendar = (nombre, duracion, precio) => {
-
-  const user = auth.currentUser;
-
-  if(!user){
-    alert("Debes iniciar sesión para agendar 📅");
-    window.location.href = "login.html";
-    return;
-  }
-
-  /* guardar datos del servicio */
-  localStorage.setItem("servicio", nombre);
-  localStorage.setItem("duracion", duracion);
-  localStorage.setItem("precio", precio);
-
-  /* ir agenda */
-  window.location.href = "agendar.html";
-};
-
-// 🔙 VOLVER
-window.volver = () => {
-  window.location.href = "servicios.html";
-};
-
-</script>
+<!-- JS EXTERNO -->
+<script type="module" src="js/categoria.js"></script>
 
 </body>
 </html>

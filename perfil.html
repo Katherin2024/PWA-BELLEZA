@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Mi Perfil</title>
+
 <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
@@ -13,97 +17,41 @@
 
 <h1>Mi Perfil 💖</h1>
 
-<input type="text" id="nombre">
+<input
+type="text"
+id="nombre"
+placeholder="Nombre">
 
-<input type="text" id="telefono">
+<input
+type="text"
+id="telefono"
+placeholder="Teléfono">
 
-<input type="text" id="direccion1">
+<input
+type="text"
+id="direccion1"
+placeholder="Dirección principal">
 
-<input type="text" id="direccion2">
+<input
+type="text"
+id="direccion2"
+placeholder="Dirección secundaria">
 
 <button onclick="guardarCambios()">
 Guardar Cambios
 </button>
-<!-- BOTÓN VOLVER -->
-<button class="btn-volver-float" onclick="volver()">⬅</button>
 
 </div>
 
-<script type="module">
+<!-- BOTÓN VOLVER -->
+<button
+class="btn-volver-float"
+onclick="volver()">
+⬅
+</button>
 
-import {
-getAuth,
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-getDoc,
-updateDoc
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
-import { app } from "./js/firebase-config.js";
-
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let uid = "";
-
-/* Cargar datos */
-onAuthStateChanged(auth, async(user)=>{
-
-if(!user){
-window.location.href="login.html";
-return;
-}
-
-uid = user.uid;
-
-const snap =
-await getDoc(doc(db,"usuarios",uid));
-
-if(snap.exists()){
-
-const data = snap.data();
-
-document.getElementById("nombre").value = data.nombre || "";
-document.getElementById("telefono").value = data.telefono || "";
-document.getElementById("direccion1").value = data.direccion1 || "";
-document.getElementById("direccion2").value = data.direccion2 || "";
-
-}
-
-});
-
-/* Guardar */
-window.guardarCambios = async() => {
-
-await updateDoc(doc(db,"usuarios",uid),{
-
-nombre:document.getElementById("nombre").value,
-telefono:document.getElementById("telefono").value,
-direccion1:document.getElementById("direccion1").value,
-direccion2:document.getElementById("direccion2").value
-
-});
-
-alert("Datos actualizados 💖");
-
-window.location.href="index.html";
-
-};
-/* ======================================================
-   VOLVER
-====================================================== */
-window.volver = ()=>{
-
-    window.location.href = "index.html";
-
-};
-
-</script>
+<!-- JS EXTERNO -->
+<script type="module" src="js/perfil.js"></script>
 
 </body>
 </html>
-
