@@ -21,186 +21,543 @@
 
     <h2>Agendar cita 📅</h2>
 
-    <!-- SERVICIO -->
+    <!-- SERVICIOS -->
     <input
-        type="text"
-        id="servicio"
-        readonly
+    type="text"
+    id="servicio"
+    readonly
+    placeholder="Servicios seleccionados"
     >
+
+    <!-- DURACIÓN -->
+    <input
+    type="text"
+    id="duracion"
+    readonly
+    placeholder="Duración total"
+    >
+
+    <!-- AGREGAR EXTRA -->
+    <select id="otroServicio">
+
+        <option value="">
+        💅 Agregar otro servicio
+        </option>
+
+    </select>
+
+    <button
+    type="button"
+    onclick="agregarServicioExtra()">
+    + Agregar servicio
+    </button>
 
     <!-- FECHA -->
     <input
-        type="date"
-        id="fecha"
+    type="date"
+    id="fecha"
     >
 
     <!-- HORA -->
-    <input
-        type="time"
-        id="hora"
-    >
+    <select id="hora">
+
+        <option value="">
+        ⏰ Selecciona hora
+        </option>
+
+    </select>
 
     <!-- DIRECCIÓN -->
     <select id="direccion">
 
         <option value="">
-            📍 Selecciona tu dirección
+        📍 Selecciona tu dirección
         </option>
 
     </select>
 
-    <!-- BOTÓN -->
+    <!-- GUARDAR -->
     <button onclick="guardarCita()">
-        Guardar cita
+    Guardar cita
     </button>
 
 </div>
 
-<!-- SCRIPT -->
 <script type="module">
 
-/* ======================================================
-   IMPORTAR FIREBASE
-====================================================== */
+/* =========================================
+FIREBASE
+========================================= */
 import {
-    getFirestore,
-    collection,
-    addDoc,
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+getFirestore,
+collection,
+getDocs,
+addDoc,
+doc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 import {
-    getAuth,
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+getAuth,
+onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-import { app } from "./js/firebase-config.js";
+import { app }
+from "./js/firebase-config.js";
 
-/* ======================================================
-   INICIALIZAR
-====================================================== */
-const db = getFirestore(app);
-const auth = getAuth(app);
+/* =========================================
+INICIALIZAR
+========================================= */
+const db =
+getFirestore(app);
 
-/* ======================================================
-   CARGAR SERVICIO
-====================================================== */
-const servicio =
-localStorage.getItem("servicio") || "";
+const auth =
+getAuth(app);
+
+/* =========================================
+VARIABLES
+========================================= */
+const horasBase = [
+"08:00","09:00","10:00","11:00",
+"12:00","13:00","14:00","15:00","16:00"
+];
+
+const trayectoMin = 35;
+
+let serviciosElegidos = [];
+let serviciosFirebase = [];
+let duracionTotal = 0;
+
+/* =========================================
+MINUTOS
+========================================= */
+function obtenerMinutos(texto){
+
+texto = texto.toLowerCase();
+
+if(texto.includes("120")) return 120;
+if(texto.includes("90")) return 90;
+if(texto.includes("60")) return 60;
+if(texto.includes("40")) return 40;
+if(texto.includes("30")) return 30;
+if(texto.includes("2")) return 120;
+if(texto.includes("1")) return 60;
+
+return 60;
+
+}
+
+/* =========================================
+FORMATO HORA
+========================================= */
+function formatoHora(hora){
+
+let [h,m] = hora.split(":");
+
+h = Number(h);
+
+let ampm =
+h >= 12 ? "PM" : "AM";
+
+let hora12 =
+h % 12;
+
+if(hora12 === 0){
+hora12 = 12;
+}
+
+return hora12 + ":" + m + " " + ampm;
+
+}
+
+/* =========================================
+ACTUALIZAR VISTA
+========================================= */
+function actualizarVista(){
 
 document.getElementById("servicio").value =
-servicio;
+serviciosElegidos
+.map(s => s.nombre)
+.join(" + ");
 
-/* ======================================================
-   CARGAR DIRECCIONES DESDE FIREBASE
-====================================================== */
-onAuthStateChanged(auth, async(user) => {
+document.getElementById("duracion").value =
+duracionTotal + " min + trayecto";
 
-    if(!user){
+}
 
-        alert("Debes iniciar sesión ⚠️");
+/* =========================================
+CARGAR SERVICIO PRINCIPAL
+========================================= */
+function cargarPrincipal(){
 
-        window.location.href = "login.html";
+const nombre =
+localStorage.getItem("servicio") || "";
 
-        return;
-    }
+const duracion =
+localStorage.getItem("duracion") || "60";
 
-    /* Buscar datos del usuario */
-    const snap =
-    await getDoc(doc(db,"usuarios",user.uid));
+const minutos =
+obtenerMinutos(duracion);
 
-    if(snap.exists()){
+serviciosElegidos.push({
+nombre:nombre,
+minutos:minutos
+});
 
-        const data = snap.data();
+duracionTotal += minutos;
 
-        const select =
-        document.getElementById("direccion");
+actualizarVista();
 
-        select.innerHTML =
-        `<option value="">📍 Selecciona tu dirección</option>`;
+}
 
-        /* Dirección principal */
-        if(data.direccion1){
+/* =========================================
+CARGAR SERVICIOS FIREBASE
+========================================= */
+async function cargarServicios(){
 
-            select.innerHTML += `
-                <option value="${data.direccion1}">
-                    ${data.direccion1}
-                </option>
-            `;
-        }
+const select =
+document.getElementById("otroServicio");
 
-        /* Dirección secundaria */
-        if(data.direccion2){
+const snap =
+await getDocs(collection(db,"servicios"));
 
-            select.innerHTML += `
-                <option value="${data.direccion2}">
-                    ${data.direccion2}
-                </option>
-            `;
-        }
+snap.forEach(docSnap=>{
 
-    }
+const s = docSnap.data();
+
+serviciosFirebase.push(s);
+
+select.innerHTML += `
+<option value="${s.nombre}">
+${s.nombre}
+</option>
+`;
 
 });
 
-/* ======================================================
-   GUARDAR CITA
-====================================================== */
-window.guardarCita = async () => {
+}
 
-    const fecha =
-    document.getElementById("fecha").value;
+/* =========================================
+AGREGAR EXTRA
+========================================= */
+window.agregarServicioExtra = ()=>{
 
-    const hora =
-    document.getElementById("hora").value;
+const nombre =
+document.getElementById("otroServicio").value;
 
-    const direccion =
-    document.getElementById("direccion").value;
+if(!nombre){
+alert("Selecciona un servicio ⚠️");
+return;
+}
 
-    if(!fecha || !hora || !direccion){
+if(serviciosElegidos.length >= 3){
+alert("Máximo 3 servicios 💖");
+return;
+}
 
-        alert("Completa todos los campos ⚠️");
+const repetido =
+serviciosElegidos.some(
+s => s.nombre === nombre
+);
 
-        return;
-    }
+if(repetido){
+alert("Ese servicio ya fue agregado ⚠️");
+return;
+}
 
-    try{
+const encontrado =
+serviciosFirebase.find(
+s => s.nombre === nombre
+);
 
-        await addDoc(collection(db,"citas"),{
+const minutos =
+obtenerMinutos(encontrado.duracion);
 
-            usuario: auth.currentUser.email,
+serviciosElegidos.push({
+nombre:nombre,
+minutos:minutos
+});
 
-            servicio: servicio,
+duracionTotal += minutos;
 
-            fecha: fecha,
+actualizarVista();
 
-            hora: hora,
+const fecha =
+document.getElementById("fecha").value;
 
-            direccion: direccion
+if(fecha){
+cargarHorasDisponibles();
+}
 
-        });
+};
 
-        alert("Cita agendada con éxito 💖");
+/* =========================================
+HORAS DISPONIBLES
+========================================= */
+async function cargarHorasDisponibles(){
 
-        window.location.href = "index.html";
+const fecha =
+document.getElementById("fecha").value;
 
-    }catch(error){
+const select =
+document.getElementById("hora");
 
-        alert("Error: " + error.message);
+select.innerHTML =
+`<option value="">⏰ Selecciona hora</option>`;
 
-    }
+if(!fecha) return;
+
+const totalMin =
+duracionTotal + trayectoMin;
+
+const snap =
+await getDocs(collection(db,"citas"));
+
+horasBase.forEach(horaTexto=>{
+
+const [h,m] =
+horaTexto.split(":");
+
+const inicioMin =
+Number(h)*60 + Number(m);
+
+const finMin =
+inicioMin + totalMin;
+
+if(finMin > 1080){
+return;
+}
+
+let ocupado = false;
+
+snap.forEach(docSnap=>{
+
+const c = docSnap.data();
+
+if(c.fecha === fecha){
+
+if(
+inicioMin < c.finMin &&
+finMin > c.inicioMin
+){
+ocupado = true;
+}
+
+}
+
+});
+
+if(!ocupado){
+
+select.innerHTML += `
+<option value="${horaTexto}">
+${formatoHora(horaTexto)}
+</option>
+`;
+
+}
+
+});
+
+}
+
+/* =========================================
+USUARIO + DIRECCIONES
+========================================= */
+onAuthStateChanged(auth, async(user)=>{
+
+if(!user){
+
+alert("Debes iniciar sesión ⚠️");
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+const snap =
+await getDoc(
+doc(db,"usuarios",user.uid)
+);
+
+if(snap.exists()){
+
+const data =
+snap.data();
+
+const select =
+document.getElementById("direccion");
+
+if(data.direccion1){
+
+select.innerHTML += `
+<option value="${data.direccion1}">
+${data.direccion1}
+</option>
+`;
+
+}
+
+if(data.direccion2){
+
+select.innerHTML += `
+<option value="${data.direccion2}">
+${data.direccion2}
+</option>
+`;
+
+}
+
+}
+
+});
+
+/* =========================================
+GUARDAR CITA
+========================================= */
+window.guardarCita = async()=>{
+
+const fecha =
+document.getElementById("fecha").value;
+
+const hora =
+document.getElementById("hora").value;
+
+const direccion =
+document.getElementById("direccion").value;
+
+if(!fecha || !hora || !direccion){
+
+alert("Completa todos los campos ⚠️");
+return;
+
+}
+
+const [h,m] =
+hora.split(":");
+
+const inicioMin =
+Number(h)*60 + Number(m);
+
+const finMin =
+inicioMin +
+duracionTotal +
+trayectoMin;
+
+try{
+
+await addDoc(
+collection(db,"citas"),
+{
+usuario:
+auth.currentUser.email,
+
+servicio:
+serviciosElegidos
+.map(s=>s.nombre)
+.join(" + "),
+
+fecha:
+fecha,
+
+hora:
+hora,
+
+direccion:
+direccion,
+
+duracionMin:
+duracionTotal,
+
+trayectoMin:
+trayectoMin,
+
+inicioMin:
+inicioMin,
+
+finMin:
+finMin,
+
+estado:
+"pendiente"
+}
+);
+
+/* WhatsApp automático */
+const mensaje =
+encodeURIComponent(
+`Hola 💖 Nueva cita solicitada
+
+👤 ${auth.currentUser.email}
+
+💅 ${serviciosElegidos.map(s=>s.nombre).join(" + ")}
+
+📅 ${fecha}
+⏰ ${hora}
+📍 ${direccion}
+
+Revisar panel administrador ✨`
+);
+
+const linkWhats =
+"https://wa.me/573227257705?text=" +
+mensaje;
+
+/* Pantalla final SIN calendar */
+document.querySelector(".container").innerHTML = `
+
+<h2>✅ Cita guardada 💖</h2>
+
+<p>
+Tu solicitud fue registrada con éxito.
+</p>
+
+<button onclick="window.open('${linkWhats}','_blank')">
+📲 Enviar WhatsApp
+</button>
+
+`;
+
+}catch(error){
+
+alert(
+"Error: " +
+error.message
+);
+
+}
 
 };
 
-/* ======================================================
-   VOLVER
-====================================================== */
-window.volver = () => {
+/* =========================================
+EVENTO FECHA
+========================================= */
+document
+.getElementById("fecha")
+.addEventListener(
+"change",
+cargarHorasDisponibles
+);
 
-    window.location.href = "index.html";
+/* =========================================
+VOLVER
+========================================= */
+window.volver = ()=>{
+
+window.location.href =
+"index.html";
 
 };
+
+/* =========================================
+INICIAR
+========================================= */
+cargarPrincipal();
+cargarServicios();
 
 </script>
 

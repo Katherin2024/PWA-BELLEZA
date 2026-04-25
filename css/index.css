@@ -25,6 +25,8 @@ button,
 .saludo{
     font-family:'Great Vibes', cursive;
     font-weight:normal;
+    font-size:36px;
+    line-height:1.5;
     letter-spacing:1px;
     color:#222;
 }
@@ -164,6 +166,7 @@ button,
 /* Posicionamiento superpuesto */
 .prev { margin-right: -30px; }
 .next { margin-left: -30px; }
+
 /* ================= FOOTER ================= */
 .footer {
   background-color: #c70867;

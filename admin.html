@@ -2,362 +2,485 @@
 <html lang="es">
 <head>
 
-    <!-- Configuración básica -->
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Responsive -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrador</title>
 
-    <!-- Título -->
-    <title>Administrador</title>
-
-    <!-- Estilos -->
-    <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
 
 </head>
 
-<body>
+<body style="display:none;">
 
-<!-- ======================================================
-     HEADER ADMIN
-====================================================== -->
 <header class="header">
 
-    <nav class="menu">
+<div class="logo">💅 Belleza Admin</div>
 
-        <!-- Ir al formulario -->
-        <a href="#agregar">Agregar</a>
+<nav class="menu">
 
-        <!-- Ir servicios -->
-        <a href="#servicios">Servicios</a>
+<a href="#agregar">Agregar</a>
+<a href="#servicios">Servicios</a>
+<a href="#citas">Citas</a>
 
-        <!-- Ir citas -->
-        <a href="#citas">Citas</a>
+<button
+class="btn-solid"
+onclick="cerrarSesion()">
+Cerrar sesión
+</button>
 
-        <!-- Cerrar sesión -->
-        <button class="btn-solid" onclick="cerrarSesion()">
-            Cerrar Sesión
-        </button>
-
-    </nav>
+</nav>
 
 </header>
 
-<!-- ======================================================
-     TITULO
-====================================================== -->
-<h1 class="titulo">Panel Administrador 👩‍💼</h1>
+<h1 class="titulo">
+Panel Administrador 👩‍💼
+</h1>
 
-<!-- ======================================================
-     AGREGAR SERVICIO
-====================================================== -->
+<!-- AGREGAR -->
 <section id="agregar">
 
 <div class="admin-box">
 
-    <h2>Agregar Servicio 💅</h2>
+<h2>Agregar Servicio 💅</h2>
 
-    <input
-        type="text"
-        id="nombre"
-        placeholder="Nombre del servicio"
-    >
+<input
+type="text"
+id="nombre"
+placeholder="Nombre del servicio"
+>
 
-    <input
-        type="number"
-        id="precio"
-        placeholder="Precio"
-    >
+<input
+type="number"
+id="precio"
+placeholder="Precio"
+>
 
-    <input
-        type="text"
-        id="duracion"
-        placeholder="Duración"
-    >
+<input
+type="text"
+id="duracion"
+placeholder="Duración"
+>
 
-    <select id="categoria">
+<select id="categoria">
 
-        <option value="">Selecciona categoría</option>
-        <option value="uñas">Uñas</option>
-        <option value="cejas">Cejas</option>
-        <option value="depilacion">Depilación</option>
-        <option value="pestañas">Pestañas</option>
+<option value="">
+Selecciona categoría
+</option>
 
-    </select>
+<option value="uñas">
+Uñas
+</option>
 
-    <button onclick="agregarServicio()">
-        Agregar Servicio
-    </button>
+<option value="cejas">
+Cejas
+</option>
+
+<option value="depilacion">
+Depilación
+</option>
+
+<option value="pestañas">
+Pestañas
+</option>
+
+</select>
+
+<button onclick="agregarServicio()">
+Agregar Servicio
+</button>
 
 </div>
 
 </section>
 
-<!-- ======================================================
-     SERVICIOS
-====================================================== -->
+<!-- SERVICIOS -->
 <section id="servicios">
 
-<h2 class="titulo">Servicios Registrados 💖</h2>
+<h2 class="titulo">
+Servicios Registrados 💖
+</h2>
 
-<div id="listaServicios" class="admin-list"></div>
+<div
+id="listaServicios"
+class="admin-list">
+</div>
 
 </section>
 
-<!-- ======================================================
-     CITAS
-====================================================== -->
+<!-- CITAS -->
 <section id="citas">
 
-<h2 class="titulo">Citas de Clientes 📅</h2>
+<h2 class="titulo">
+Citas de Clientes 📅
+</h2>
 
-<div id="listaCitas" class="admin-list citas"></div>
+<div
+id="listaCitas"
+class="admin-list citas">
+</div>
 
 </section>
 
-<!-- ======================================================
-     SCRIPT FIREBASE
-====================================================== -->
+<!-- SUBIR -->
+<a href="#agregar"
+class="btn-subir-admin">
+↑
+</a>
+
 <script type="module">
 
-/* ======================================================
-   IMPORTAR FIREBASE
-====================================================== */
 import {
-    getFirestore,
-    collection,
-    getDocs,
-    addDoc,
-    deleteDoc,
-    doc,
-    updateDoc
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+getFirestore,
+collection,
+getDocs,
+addDoc,
+deleteDoc,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-import { app } from "./js/firebase-config.js";
+import { app }
+from "./js/firebase-config.js";
 
-/* ======================================================
-   INICIALIZAR
-====================================================== */
-const db = getFirestore(app);
-const auth = getAuth(app);
+/* ===============================
+INICIALIZAR
+=============================== */
+const db =
+getFirestore(app);
 
-/* ======================================================
-   VALIDAR LOGIN
-====================================================== */
-onAuthStateChanged(auth, (user) => {
+const auth =
+getAuth(app);
 
-    if(!user){
-        window.location.href = "login.html";
-        return;
-    }
+/* ===============================
+PROTEGER ADMIN
+=============================== */
+onAuthStateChanged(auth,(user)=>{
 
-    cargarServicios();
-    cargarCitas();
+if(!user){
+
+window.location.href = "login.html";
+return;
+
+}
+
+if(
+user.email !==
+"heidy.avilesp@uniagustiniana.edu.co"
+){
+
+window.location.href = "index.html";
+return;
+
+}
+
+/* SI ES ADMIN */
+document.body.style.display = "block";
+
+cargarServicios();
+cargarCitas();
 
 });
 
-/* ======================================================
-   CERRAR SESION
-====================================================== */
-window.cerrarSesion = () => {
+/* ===============================
+CERRAR SESIÓN
+=============================== */
+window.cerrarSesion = ()=>{
 
-    signOut(auth).then(() => {
-        window.location.href = "login.html";
-    });
+signOut(auth).then(()=>{
+
+window.location.href =
+"login.html";
+
+});
 
 };
 
-/* ======================================================
-   CARGAR SERVICIOS
-====================================================== */
+/* ===============================
+AGREGAR SERVICIO
+=============================== */
+window.agregarServicio =
+async()=>{
+
+const nombre =
+document.getElementById("nombre").value;
+
+const precio =
+document.getElementById("precio").value;
+
+const duracion =
+document.getElementById("duracion").value;
+
+const categoria =
+document.getElementById("categoria").value;
+
+if(
+!nombre ||
+!precio ||
+!duracion ||
+!categoria
+){
+
+alert(
+"Completa todos los campos ⚠️"
+);
+
+return;
+
+}
+
+await addDoc(
+collection(db,"servicios"),
+{
+nombre,
+precio:Number(precio),
+duracion,
+categoria
+}
+);
+
+alert(
+"Servicio agregado 💖"
+);
+
+location.reload();
+
+};
+
+/* ===============================
+CARGAR SERVICIOS
+=============================== */
 async function cargarServicios(){
 
-    const contenedor = document.getElementById("listaServicios");
+const contenedor =
+document.getElementById(
+"listaServicios"
+);
 
-    const snap = await getDocs(collection(db,"servicios"));
+const snap =
+await getDocs(
+collection(db,"servicios")
+);
 
-    let html = "";
+let html = "";
 
-    snap.forEach(docSnap => {
+snap.forEach(docSnap=>{
 
-        const s = docSnap.data();
-        const id = docSnap.id;
+const s =
+docSnap.data();
 
-        html += `
-            <div class="admin-card">
+const id =
+docSnap.id;
 
-                <h3>${s.nombre}</h3>
+html += `
+<div class="admin-card">
 
-                <p>💰 $${s.precio}</p>
+<h3>${s.nombre}</h3>
 
-                <p>⏱ ${s.duracion}</p>
+<p>💰 $${s.precio}</p>
 
-                <p>📌 ${s.categoria}</p>
+<p>⏱ ${s.duracion}</p>
 
-                <button onclick="editar('${id}')">
-                    Editar ✏️
-                </button>
+<p>📌 ${s.categoria}</p>
 
-                <button onclick="eliminar('${id}')">
-                    Eliminar ❌
-                </button>
+<button
+onclick="editar('${id}')">
+Editar ✏️
+</button>
 
-            </div>
-        `;
-    });
+<button
+onclick="eliminar('${id}')">
+Eliminar ❌
+</button>
 
-    contenedor.innerHTML = html;
+</div>
+`;
+
+});
+
+contenedor.innerHTML =
+html;
+
 }
 
-/* ======================================================
-   AGREGAR SERVICIO
-====================================================== */
-window.agregarServicio = async () => {
+/* ===============================
+ELIMINAR
+=============================== */
+window.eliminar =
+async(id)=>{
 
-    const nombre = document.getElementById("nombre").value;
-    const precio = document.getElementById("precio").value;
-    const duracion = document.getElementById("duracion").value;
-    const categoria = document.getElementById("categoria").value;
+await deleteDoc(
+doc(db,"servicios",id)
+);
 
-    if(!nombre || !precio || !duracion || !categoria){
-        alert("Completa todos los campos ⚠️");
-        return;
-    }
+location.reload();
 
-    await addDoc(collection(db,"servicios"),{
-        nombre,
-        precio:Number(precio),
-        duracion,
-        categoria
-    });
-
-    alert("Servicio agregado 💖");
-
-    location.reload();
 };
 
-/* ======================================================
-   ELIMINAR
-====================================================== */
-window.eliminar = async(id) => {
+/* ===============================
+EDITAR
+=============================== */
+window.editar =
+async(id)=>{
 
-    await deleteDoc(doc(db,"servicios",id));
+const nombre =
+prompt("Nuevo nombre:");
 
-    location.reload();
+const precio =
+prompt("Nuevo precio:");
+
+const duracion =
+prompt("Nueva duración:");
+
+if(
+!nombre ||
+!precio ||
+!duracion
+){
+return;
+}
+
+await updateDoc(
+doc(db,"servicios",id),
+{
+nombre,
+precio:Number(precio),
+duracion
+}
+);
+
+location.reload();
+
 };
 
-/* ======================================================
-   EDITAR
-====================================================== */
-window.editar = async(id) => {
-
-    const nombre = prompt("Nuevo nombre:");
-    const precio = prompt("Nuevo precio:");
-    const duracion = prompt("Nueva duración:");
-
-    if(!nombre || !precio || !duracion) return;
-
-    await updateDoc(doc(db,"servicios",id),{
-        nombre,
-        precio:Number(precio),
-        duracion
-    });
-
-    location.reload();
-};
-
-/* ======================================================
-   CARGAR CITAS
-====================================================== */
+/* ===============================
+CARGAR CITAS
+=============================== */
 async function cargarCitas(){
 
-    const contenedor = document.getElementById("listaCitas");
+const contenedor =
+document.getElementById(
+"listaCitas"
+);
 
-    const citasSnap = await getDocs(collection(db,"citas"));
-    const usuariosSnap = await getDocs(collection(db,"usuarios"));
+const citasSnap =
+await getDocs(
+collection(db,"citas")
+);
 
-    let html = "";
+let html = "";
 
-    citasSnap.forEach(docSnap => {
+citasSnap.forEach(docSnap=>{
 
-        const c = docSnap.data();
-        const id = docSnap.id;
+const c =
+docSnap.data();
 
-        let nombreCliente = "Cliente";
+const id =
+docSnap.id;
 
-        usuariosSnap.forEach(userDoc => {
+let color =
+"#f1c40f";
 
-            const userData = userDoc.data();
-
-            if(
-                userData.email.trim().toLowerCase() ===
-                c.usuario.trim().toLowerCase()
-            ){
-                nombreCliente = userData.nombre;
-            }
-
-        });
-
-        html += `
-            <div class="admin-card">
-
-                <h3>${c.servicio}</h3>
-
-                <p>👤 ${nombreCliente}</p>
-
-                <p>📧 ${c.usuario}</p>
-
-                <p>📅 ${c.fecha}</p>
-
-                <p>⏰ ${c.hora}</p>
-
-                <p>📍 ${c.direccion}</p>
-
-                <p><strong>Estado:</strong> ${c.estado || "pendiente"}</p>
-
-                <button onclick="aprobar('${id}')">
-                    Aprobar ✅
-                </button>
-
-                <button onclick="rechazar('${id}')">
-                    Rechazar ❌
-                </button>
-
-            </div>
-        `;
-    });
-
-    contenedor.innerHTML = html;
+if(
+c.estado ===
+"aprobado"
+){
+color =
+"#00b894";
 }
 
-/* ======================================================
-   APROBAR
-====================================================== */
-window.aprobar = async(id) => {
+if(
+c.estado ===
+"rechazado"
+){
+color =
+"#ff1744";
+}
 
-    await updateDoc(doc(db,"citas",id),{
-        estado:"aprobado"
-    });
+html += `
+<div class="admin-card">
 
-    location.reload();
+<h3>${c.servicio}</h3>
+
+<p>📧 ${c.usuario}</p>
+
+<p>📅 ${c.fecha}</p>
+
+<p>⏰ ${c.hora}</p>
+
+<p>📍 ${c.direccion}</p>
+
+<p
+style="
+background:${color};
+color:white;
+padding:8px;
+border-radius:12px;
+font-weight:bold;
+">
+${c.estado || "pendiente"}
+</p>
+
+<button
+onclick="aprobar('${id}')">
+Aprobar ✅
+</button>
+
+<button
+onclick="rechazar('${id}')">
+Rechazar ❌
+</button>
+
+</div>
+`;
+
+});
+
+contenedor.innerHTML =
+html;
+
+}
+
+/* ===============================
+APROBAR
+=============================== */
+window.aprobar =
+async(id)=>{
+
+await updateDoc(
+doc(db,"citas",id),
+{
+estado:"aprobado"
+}
+);
+
+cargarCitas();
+
 };
 
-/* ======================================================
-   RECHAZAR
-====================================================== */
-window.rechazar = async(id) => {
+/* ===============================
+RECHAZAR
+=============================== */
+window.rechazar =
+async(id)=>{
 
-    await updateDoc(doc(db,"citas",id),{
-        estado:"rechazado"
-    });
+await updateDoc(
+doc(db,"citas",id),
+{
+estado:"rechazado"
+}
+);
 
-    location.reload();
+cargarCitas();
+
 };
 
 </script>

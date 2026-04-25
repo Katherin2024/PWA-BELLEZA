@@ -61,7 +61,13 @@ querySnapshot.forEach(doc => {
         <p>💰 $${s.precio}</p>
         <p>⏱ ${s.duracion}</p>
 
-        <button onclick="agendar('${s.nombre}')">Agendar</button>
+        <button onclick="agendar(
+        '${s.nombre}',
+        '${s.duracion}',
+        '${s.precio}'
+        )">
+        Agendar
+        </button>
       </div>
     `;
   }
@@ -76,17 +82,22 @@ if(html === ""){
 document.getElementById("listaServicios").innerHTML = html;
 
 // 🔐 VALIDACIÓN LOGIN
-window.agendar = (servicio) => {
+window.agendar = (nombre, duracion, precio) => {
 
   const user = auth.currentUser;
 
-  if (!user) {
+  if(!user){
     alert("Debes iniciar sesión para agendar 📅");
     window.location.href = "login.html";
     return;
   }
 
-  localStorage.setItem("servicio", servicio);
+  /* guardar datos del servicio */
+  localStorage.setItem("servicio", nombre);
+  localStorage.setItem("duracion", duracion);
+  localStorage.setItem("precio", precio);
+
+  /* ir agenda */
   window.location.href = "agendar.html";
 };
 

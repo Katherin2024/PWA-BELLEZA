@@ -27,6 +27,8 @@ button,
 .saludo{
     font-family:'Great Vibes', cursive;
     font-weight:normal;
+    font-size:36px;
+    line-height:1.5;
     letter-spacing:1px;
     color:#222;
 }
@@ -378,7 +380,30 @@ p{
 
     z-index:999;
 }
+/* =======================================================
+   BOTON SUBIR FLOTANTE
+======================================================= */
 
+.btn-subir-admin{
+    position: fixed;
+    left: 18px;
+    bottom: 18px;
+
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+    background:linear-gradient(45deg,#ff3ea5,#68b2dd);
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+    font-size: 24px;
+    z-index: 999;
+}
 
 /* ======================================================
    SOLO PANEL ADMIN
