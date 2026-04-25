@@ -19,55 +19,35 @@ signOut
 }
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-/* Importar configuración principal */
 import { app }
 from "./firebase-config.js";
 
 /* =========================================
-INICIALIZAR FIREBASE
+INICIALIZAR
 ========================================= */
-
-/* Base de datos */
-const db =
-getFirestore(app);
-
-/* Autenticación */
-const auth =
-getAuth(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 /* =========================================
-VALIDAR ADMINISTRADOR
+VALIDAR ADMIN
 ========================================= */
 onAuthStateChanged(auth,(user)=>{
 
-/* Si no hay usuario */
 if(!user){
-
-window.location.href =
-"login.html";
-
+window.location.href = "login.html";
 return;
-
 }
 
-/* Si no es correo administrador */
 if(
 user.email !==
 "heidy.avilesp@uniagustiniana.edu.co"
 ){
-
-window.location.href =
-"index.html";
-
+window.location.href = "index.html";
 return;
-
 }
 
-/* Mostrar página */
-document.body.style.display =
-"block";
+document.body.style.display = "block";
 
-/* Cargar información */
 cargarServicios();
 cargarCitas();
 
@@ -80,49 +60,61 @@ window.cerrarSesion = ()=>{
 
 signOut(auth).then(()=>{
 
-window.location.href =
-"login.html";
+window.location.href = "login.html";
 
 });
 
 };
 
 /* =========================================
+WHATSAPP MOVIL + PC
+========================================= */
+function abrirWhatsApp(link){
+
+const esMovil =
+/Android|iPhone|iPad|iPod/i.test(
+navigator.userAgent
+);
+
+if(esMovil){
+
+window.location.href = link;
+
+}else{
+
+window.open(link,"_blank");
+
+}
+
+}
+
+/* =========================================
 AGREGAR SERVICIO
 ========================================= */
-window.agregarServicio =
-async()=>{
+window.agregarServicio = async()=>{
 
-/* Capturar campos */
 const nombre =
-document.getElementById("nombre").value;
+document.getElementById("nombre").value.trim();
 
 const precio =
-document.getElementById("precio").value;
+document.getElementById("precio").value.trim();
 
 const duracion =
-document.getElementById("duracion").value;
+document.getElementById("duracion").value.trim();
 
 const categoria =
 document.getElementById("categoria").value;
 
-/* Validar */
 if(
 !nombre ||
 !precio ||
 !duracion ||
 !categoria
 ){
-
-alert(
-"Completa todos los campos"
-);
-
+alert("Completa todos los campos");
 return;
-
 }
 
-/* Guardar servicio */
 await addDoc(
 collection(db,"servicios"),
 {
@@ -133,7 +125,6 @@ categoria
 }
 );
 
-/* Recargar página */
 location.reload();
 
 };
@@ -143,41 +134,29 @@ CARGAR SERVICIOS
 ========================================= */
 async function cargarServicios(){
 
-/* Contenedor HTML */
 const contenedor =
-document.getElementById(
-"listaServicios"
-);
+document.getElementById("listaServicios");
 
-/* Consultar Firebase */
 const snap =
-await getDocs(
-collection(db,"servicios")
-);
+await getDocs(collection(db,"servicios"));
 
-/* Variable HTML */
 let html = "";
 
-/* Recorrer servicios */
 snap.forEach(docSnap=>{
 
-const servicio =
-docSnap.data();
+const s = docSnap.data();
+const id = docSnap.id;
 
-const id =
-docSnap.id;
-
-/* Crear tarjeta */
 html += `
 <div class="admin-card">
 
-<h3>${servicio.nombre}</h3>
+<h3>${s.nombre}</h3>
 
-<p>💰 $${servicio.precio}</p>
+<p>💰 $${s.precio}</p>
 
-<p>⏱ ${servicio.duracion}</p>
+<p>⏱ ${s.duracion}</p>
 
-<p>📌 ${servicio.categoria}</p>
+<p>📌 ${s.categoria}</p>
 
 <button onclick="editar('${id}')">
 Editar ✏️
@@ -192,17 +171,14 @@ Eliminar ❌
 
 });
 
-/* Mostrar */
-contenedor.innerHTML =
-html;
+contenedor.innerHTML = html;
 
 }
 
 /* =========================================
 EDITAR SERVICIO
 ========================================= */
-window.editar =
-async(id)=>{
+window.editar = async(id)=>{
 
 const nombre =
 prompt("Nuevo nombre:");
@@ -217,9 +193,7 @@ if(
 !nombre ||
 !precio ||
 !duracion
-){
-return;
-}
+)return;
 
 await updateDoc(
 doc(db,"servicios",id),
@@ -237,8 +211,7 @@ location.reload();
 /* =========================================
 ELIMINAR SERVICIO
 ========================================= */
-window.eliminar =
-async(id)=>{
+window.eliminar = async(id)=>{
 
 await deleteDoc(
 doc(db,"servicios",id)
@@ -254,117 +227,93 @@ CARGAR CITAS
 async function cargarCitas(){
 
 const contenedor =
-document.getElementById(
-"listaCitas"
-);
+document.getElementById("listaCitas");
 
-/* Consultar citas */
 const citasSnap =
-await getDocs(
-collection(db,"citas")
-);
+await getDocs(collection(db,"citas"));
 
-/* Consultar usuarios */
 const usuariosSnap =
-await getDocs(
-collection(db,"usuarios")
-);
+await getDocs(collection(db,"usuarios"));
 
 let html = "";
 
-/* Recorrer citas */
 citasSnap.forEach(docSnap=>{
 
-const cita =
-docSnap.data();
+const c = docSnap.data();
+const id = docSnap.id;
 
-const id =
-docSnap.id;
+let nombreCliente = "Cliente";
+let telefonoCliente = "";
 
-/* Datos iniciales */
-let nombreCliente =
-"Cliente";
-
-let telefonoCliente =
-"";
-
-/* Buscar usuario relacionado */
 usuariosSnap.forEach(userDoc=>{
 
-const usuario =
-userDoc.data();
+const u = userDoc.data();
 
 if(
-usuario.email &&
-cita.usuario &&
-usuario.email.trim().toLowerCase() ===
-cita.usuario.trim().toLowerCase()
+u.email &&
+c.usuario &&
+u.email.trim().toLowerCase() ===
+c.usuario.trim().toLowerCase()
 ){
 
 nombreCliente =
-usuario.nombre || "Cliente";
+u.nombre || "Cliente";
 
 telefonoCliente =
-usuario.telefono || "";
+u.telefono || "";
 
 }
 
 });
 
-/* Color estado */
-let color =
-"#f1c40f";
+let color = "#f1c40f";
 
-if(cita.estado==="aprobado"){
-color="#00b894";
+if(c.estado === "aprobado"){
+color = "#00b894";
 }
 
-if(cita.estado==="rechazado"){
-color="#ff1744";
+if(c.estado === "rechazado"){
+color = "#ff1744";
 }
 
-/* ======================================
-GOOGLE CALENDAR
-====================================== */
+/* GOOGLE CALENDAR */
 const fechaBase =
-cita.fecha.replaceAll("-","");
+c.fecha.replaceAll("-","");
 
 const horaInicio =
-cita.hora.replace(":","") + "00";
+c.hora.replace(":","") + "00";
 
 let hFin =
-Math.floor((cita.finMin||0)/60);
+Math.floor((c.finMin || 0)/60);
 
 let mFin =
-(cita.finMin||0)%60;
+(c.finMin || 0)%60;
 
-if(hFin<10) hFin="0"+hFin;
-if(mFin<10) mFin="0"+mFin;
+if(hFin < 10) hFin = "0"+hFin;
+if(mFin < 10) mFin = "0"+mFin;
 
 const horaFin =
 hFin + "" + mFin + "00";
 
-/* Link calendar */
 const linkCalendar =
-`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Cita%20Belleza&dates=${fechaBase}T${horaInicio}/${fechaBase}T${horaFin}&details=${encodeURIComponent(cita.servicio)}&location=${encodeURIComponent(cita.direccion)}`;
+`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Cita%20Belleza&dates=${fechaBase}T${horaInicio}/${fechaBase}T${horaFin}&details=${encodeURIComponent(c.servicio)}&location=${encodeURIComponent(c.direccion)}`;
 
-/* Crear tarjeta */
 html += `
 <div class="admin-card">
 
-<h3>${cita.servicio}</h3>
+<h3>${c.servicio}</h3>
 
 <p>👤 ${nombreCliente}</p>
 
-<p>📧 ${cita.usuario}</p>
+<p>📧 ${c.usuario}</p>
 
 <p>📱 ${telefonoCliente}</p>
 
-<p>📅 ${cita.fecha}</p>
+<p>📅 ${c.fecha}</p>
 
-<p>⏰ ${cita.hora}</p>
+<p>⏰ ${c.hora}</p>
 
-<p>📍 ${cita.direccion}</p>
+<p>📍 ${c.direccion}</p>
 
 <p style="
 background:${color};
@@ -373,39 +322,36 @@ padding:8px;
 border-radius:12px;
 font-weight:bold;
 ">
-${cita.estado || "pendiente"}
+${c.estado || "pendiente"}
 </p>
 
-<button
-onclick="aprobar(
+<button onclick="aprobar(
 '${id}',
 '${telefonoCliente}',
 '${nombreCliente}',
-'${cita.servicio}',
-'${cita.fecha}',
-'${cita.hora}'
+'${c.servicio}',
+'${c.fecha}',
+'${c.hora}'
 )">
 Aprobar ✅
 </button>
 
-<button
-onclick="rechazar(
+<button onclick="rechazar(
 '${id}',
 '${telefonoCliente}',
 '${nombreCliente}',
-'${cita.servicio}',
-'${cita.fecha}',
-'${cita.hora}'
+'${c.servicio}',
+'${c.fecha}',
+'${c.hora}'
 )">
 Rechazar ❌
 </button>
 
 ${
-cita.estado==="aprobado"
+c.estado === "aprobado"
 ?
 `
-<button
-onclick="window.open('${linkCalendar}','_blank')">
+<button onclick="window.open('${linkCalendar}','_blank')">
 📅 Google Calendar
 </button>
 `
@@ -418,17 +364,14 @@ onclick="window.open('${linkCalendar}','_blank')">
 
 });
 
-/* Mostrar */
-contenedor.innerHTML =
-html;
+contenedor.innerHTML = html;
 
 }
 
 /* =========================================
 APROBAR CITA
 ========================================= */
-window.aprobar =
-async(
+window.aprobar = async(
 id,
 telefono,
 nombre,
@@ -436,6 +379,9 @@ servicio,
 fecha,
 hora
 )=>{
+
+telefono =
+telefono.replace(/\D/g,"");
 
 await updateDoc(
 doc(db,"citas",id),
@@ -444,10 +390,9 @@ estado:"aprobado"
 }
 );
 
-/* Mensaje */
 const mensaje =
 encodeURIComponent(
-`Hola ${nombre} ❤
+`Hola ${nombre} 💖
 
 Tu cita fue confirmada exitosamente ✨
 
@@ -455,20 +400,17 @@ Tu cita fue confirmada exitosamente ✨
 📅 Fecha: ${fecha}
 🕒 Hora: ${hora}
 
-Te esperamos ❤
+Te esperamos 💖
 
 Belleza`
 );
 
-/* Abrir WhatsApp */
-window.open(
+abrirWhatsApp(
 "https://wa.me/57"+
 telefono+
-"?text="+mensaje,
-"_blank"
+"?text="+mensaje
 );
 
-/* Recargar listado */
 cargarCitas();
 
 };
@@ -476,8 +418,7 @@ cargarCitas();
 /* =========================================
 RECHAZAR CITA
 ========================================= */
-window.rechazar =
-async(
+window.rechazar = async(
 id,
 telefono,
 nombre,
@@ -486,6 +427,9 @@ fecha,
 hora
 )=>{
 
+telefono =
+telefono.replace(/\D/g,"");
+
 await updateDoc(
 doc(db,"citas",id),
 {
@@ -493,10 +437,9 @@ estado:"rechazado"
 }
 );
 
-/* Mensaje */
 const mensaje =
 encodeURIComponent(
-`Hola ${nombre} ❤
+`Hola ${nombre} 💖
 
 Tu cita no pudo ser confirmada en ese horario ❌
 
@@ -504,20 +447,17 @@ Tu cita no pudo ser confirmada en ese horario ❌
 📅 Fecha: ${fecha}
 🕒 Hora: ${hora}
 
-Reserva otro horario disponible ❤
+Te invitamos a reservar otro horario disponible 💖
 
 Belleza`
 );
 
-/* Abrir WhatsApp */
-window.open(
+abrirWhatsApp(
 "https://wa.me/57"+
 telefono+
-"?text="+mensaje,
-"_blank"
+"?text="+mensaje
 );
 
-/* Recargar listado */
 cargarCitas();
 
 };
