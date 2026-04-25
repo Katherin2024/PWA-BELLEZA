@@ -47,20 +47,17 @@ Panel Administrador 👩‍💼
 <input
 type="text"
 id="nombre"
-placeholder="Nombre del servicio"
->
+placeholder="Nombre del servicio">
 
 <input
 type="number"
 id="precio"
-placeholder="Precio"
->
+placeholder="Precio">
 
 <input
 type="text"
 id="duracion"
-placeholder="Duración"
->
+placeholder="Duración">
 
 <select id="categoria">
 
@@ -68,21 +65,10 @@ placeholder="Duración"
 Selecciona categoría
 </option>
 
-<option value="uñas">
-Uñas
-</option>
-
-<option value="cejas">
-Cejas
-</option>
-
-<option value="depilacion">
-Depilación
-</option>
-
-<option value="pestañas">
-Pestañas
-</option>
+<option value="uñas">Uñas</option>
+<option value="cejas">Cejas</option>
+<option value="depilacion">Depilación</option>
+<option value="pestañas">Pestañas</option>
 
 </select>
 
@@ -122,11 +108,8 @@ class="admin-list citas">
 
 </section>
 
-<!-- SUBIR -->
 <a href="#agregar"
-class="btn-subir-admin">
-↑
-</a>
+class="btn-subir-admin">↑</a>
 
 <script type="module">
 
@@ -151,48 +134,43 @@ from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { app }
 from "./js/firebase-config.js";
 
-/* ===============================
-INICIALIZAR
-=============================== */
 const db =
 getFirestore(app);
 
 const auth =
 getAuth(app);
 
-/* ===============================
-PROTEGER ADMIN
-=============================== */
+/* =========================
+VALIDAR ADMIN
+========================= */
 onAuthStateChanged(auth,(user)=>{
 
 if(!user){
-
-window.location.href = "login.html";
+window.location.href =
+"login.html";
 return;
-
 }
 
 if(
 user.email !==
 "heidy.avilesp@uniagustiniana.edu.co"
 ){
-
-window.location.href = "index.html";
+window.location.href =
+"index.html";
 return;
-
 }
 
-/* SI ES ADMIN */
-document.body.style.display = "block";
+document.body.style.display =
+"block";
 
 cargarServicios();
 cargarCitas();
 
 });
 
-/* ===============================
-CERRAR SESIÓN
-=============================== */
+/* =========================
+CERRAR
+========================= */
 window.cerrarSesion = ()=>{
 
 signOut(auth).then(()=>{
@@ -204,9 +182,9 @@ window.location.href =
 
 };
 
-/* ===============================
+/* =========================
 AGREGAR SERVICIO
-=============================== */
+========================= */
 window.agregarServicio =
 async()=>{
 
@@ -228,13 +206,10 @@ if(
 !duracion ||
 !categoria
 ){
-
 alert(
-"Completa todos los campos ⚠️"
+"Completa todos los campos"
 );
-
 return;
-
 }
 
 await addDoc(
@@ -247,17 +222,13 @@ categoria
 }
 );
 
-alert(
-"Servicio agregado 💖"
-);
-
 location.reload();
 
 };
 
-/* ===============================
-CARGAR SERVICIOS
-=============================== */
+/* =========================
+SERVICIOS
+========================= */
 async function cargarServicios(){
 
 const contenedor =
@@ -291,13 +262,11 @@ html += `
 
 <p>📌 ${s.categoria}</p>
 
-<button
-onclick="editar('${id}')">
+<button onclick="editar('${id}')">
 Editar ✏️
 </button>
 
-<button
-onclick="eliminar('${id}')">
+<button onclick="eliminar('${id}')">
 Eliminar ❌
 </button>
 
@@ -311,23 +280,9 @@ html;
 
 }
 
-/* ===============================
-ELIMINAR
-=============================== */
-window.eliminar =
-async(id)=>{
-
-await deleteDoc(
-doc(db,"servicios",id)
-);
-
-location.reload();
-
-};
-
-/* ===============================
+/* =========================
 EDITAR
-=============================== */
+========================= */
 window.editar =
 async(id)=>{
 
@@ -344,9 +299,7 @@ if(
 !nombre ||
 !precio ||
 !duracion
-){
-return;
-}
+)return;
 
 await updateDoc(
 doc(db,"servicios",id),
@@ -361,9 +314,23 @@ location.reload();
 
 };
 
-/* ===============================
+/* =========================
+ELIMINAR
+========================= */
+window.eliminar =
+async(id)=>{
+
+await deleteDoc(
+doc(db,"servicios",id)
+);
+
+location.reload();
+
+};
+
+/* =========================
 CARGAR CITAS
-=============================== */
+========================= */
 async function cargarCitas(){
 
 const contenedor =
@@ -376,6 +343,11 @@ await getDocs(
 collection(db,"citas")
 );
 
+const usuariosSnap =
+await getDocs(
+collection(db,"usuarios")
+);
+
 let html = "";
 
 citasSnap.forEach(docSnap=>{
@@ -386,31 +358,77 @@ docSnap.data();
 const id =
 docSnap.id;
 
+let nombreCliente =
+"Katherin";
+
+let telefonoCliente =
+"";
+
+usuariosSnap.forEach(userDoc=>{
+
+const u =
+userDoc.data();
+
+if(
+u.email &&
+c.usuario &&
+u.email.trim().toLowerCase() ===
+c.usuario.trim().toLowerCase()
+){
+
+nombreCliente =
+u.nombre || "Cliente";
+
+telefonoCliente =
+u.telefono || "";
+
+}
+
+});
+
 let color =
 "#f1c40f";
 
-if(
-c.estado ===
-"aprobado"
-){
-color =
-"#00b894";
+if(c.estado==="aprobado"){
+color="#00b894";
 }
 
-if(
-c.estado ===
-"rechazado"
-){
-color =
-"#ff1744";
+if(c.estado==="rechazado"){
+color="#ff1744";
 }
+
+/* GOOGLE CALENDAR */
+const fechaBase =
+c.fecha.replaceAll("-","");
+
+const horaInicio =
+c.hora.replace(":","") + "00";
+
+let hFin =
+Math.floor((c.finMin||0)/60);
+
+let mFin =
+(c.finMin||0)%60;
+
+if(hFin<10) hFin="0"+hFin;
+if(mFin<10) mFin="0"+mFin;
+
+const horaFin =
+hFin + "" + mFin + "00";
+
+const linkCalendar =
+`https://calendar.google.com/calendar/render?action=TEMPLATE&text=Cita%20Belleza&dates=${fechaBase}T${horaInicio}/${fechaBase}T${horaFin}&details=${encodeURIComponent(c.servicio)}&location=${encodeURIComponent(c.direccion)}`;
 
 html += `
 <div class="admin-card">
 
 <h3>${c.servicio}</h3>
 
+<p>👤 ${nombreCliente}</p>
+
 <p>📧 ${c.usuario}</p>
+
+<p>📱 ${telefonoCliente}</p>
 
 <p>📅 ${c.fecha}</p>
 
@@ -418,8 +436,7 @@ html += `
 
 <p>📍 ${c.direccion}</p>
 
-<p
-style="
+<p style="
 background:${color};
 color:white;
 padding:8px;
@@ -430,14 +447,27 @@ ${c.estado || "pendiente"}
 </p>
 
 <button
-onclick="aprobar('${id}')">
+onclick="aprobar('${id}','${telefonoCliente}','${nombreCliente}','${c.servicio}','${c.fecha}','${c.hora}')">
 Aprobar ✅
 </button>
 
 <button
-onclick="rechazar('${id}')">
+onclick="rechazar('${id}','${telefonoCliente}','${nombreCliente}','${c.servicio}','${c.fecha}','${c.hora}')">
 Rechazar ❌
 </button>
+
+${
+c.estado==="aprobado"
+?
+`
+<button
+onclick="window.open('${linkCalendar}','_blank')">
+📅 Google Calendar
+</button>
+`
+:
+""
+}
 
 </div>
 `;
@@ -449,11 +479,18 @@ html;
 
 }
 
-/* ===============================
+/* =========================
 APROBAR
-=============================== */
+========================= */
 window.aprobar =
-async(id)=>{
+async(
+id,
+telefono,
+nombre,
+servicio,
+fecha,
+hora
+)=>{
 
 await updateDoc(
 doc(db,"citas",id),
@@ -462,21 +499,72 @@ estado:"aprobado"
 }
 );
 
+const mensaje =
+encodeURIComponent(
+`Hola ${nombre} 💖
+
+Tu cita fue confirmada exitosamente ✨
+
+💅 Servicio: ${servicio}
+📅 Fecha: ${fecha}
+⏰ Hora: ${hora}
+
+Te esperamos 💖
+
+Belleza 💅`
+);
+
+window.open(
+"https://wa.me/57"+
+telefono+
+"?text="+mensaje,
+"_blank"
+);
+
 cargarCitas();
 
 };
 
-/* ===============================
+/* =========================
 RECHAZAR
-=============================== */
+========================= */
 window.rechazar =
-async(id)=>{
+async(
+id,
+telefono,
+nombre,
+servicio,
+fecha,
+hora
+)=>{
 
 await updateDoc(
 doc(db,"citas",id),
 {
 estado:"rechazado"
 }
+);
+
+const mensaje =
+encodeURIComponent(
+`Hola ${nombre} 💖
+
+Tu cita no pudo ser confirmada en ese horario ❌
+
+💅 Servicio: ${servicio}
+📅 Fecha: ${fecha}
+⏰ Hora: ${hora}
+
+Te invitamos a reservar otro horario disponible 💖
+
+Belleza 💅`
+);
+
+window.open(
+"https://wa.me/57"+
+telefono+
+"?text="+mensaje,
+"_blank"
 );
 
 cargarCitas();
