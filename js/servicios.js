@@ -1,59 +1,26 @@
-// Importar Firebase Firestore
-import { 
-  getFirestore, 
-  collection, 
-  getDocs 
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+/* =========================================
+IR A CATEGORÍA
+========================================= */
+window.irCategoria = (categoria)=>{
 
-// Importar app
-import { app } from "./firebase-config.js";
+/* Guardar categoría */
+localStorage.setItem(
+"categoria",
+categoria
+);
 
-// Inicializar base de datos
-const db = getFirestore(app);
+/* Redirigir */
+window.location.href =
+"categoria.html";
 
-// ================= FUNCIÓN =================
-export async function cargarServicios() {
+};
 
-  try {
+/* =========================================
+VOLVER
+========================================= */
+window.volver = ()=>{
 
-    // Referencia a colección
-    const querySnapshot = await getDocs(collection(db, "servicios"));
+window.location.href =
+"index.html";
 
-    let html = "";
-
-    // Si NO hay datos
-    if (querySnapshot.empty) {
-      html = "<p style='text-align:center;'>No hay servicios registrados 💔</p>";
-    }
-
-    // Recorrer datos
-    querySnapshot.forEach(doc => {
-
-      const servicio = doc.data();
-
-      html += `
-        <div class="servicio">
-          <h3>${servicio.nombre}</h3>
-          <p>💰 $${servicio.precio}</p>
-          <p>⏱ ${servicio.duracion}</p>
-
-          <button onclick="agendar('${servicio.nombre}')">
-            Agendar
-          </button>
-        </div>
-      `;
-
-    });
-
-    // Mostrar en pantalla
-    document.getElementById("listaServicios").innerHTML = html;
-
-  } catch (error) {
-
-    console.error("Error cargando servicios:", error);
-
-    document.getElementById("listaServicios").innerHTML =
-      "<p style='color:red;text-align:center;'>Error cargando servicios ❌</p>";
-  }
-
-}
+};

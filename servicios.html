@@ -1,92 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Servicios</title>
+
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/index.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
 
 <body>
-  
-<button class="btn-volver-float" onclick="volver()">⬅</button>
 
+<!-- BOTÓN VOLVER -->
+<button
+class="btn-volver-float"
+onclick="volver()">
+⬅
+</button>
+
+<!-- HEADER -->
 <header class="header">
-  <div class="logo">💅 Belleza </div>
- </header>
 
-<h1 class="titulo">Servicios 💖</h1>
+<div class="logo">
+💅 Belleza
+</div>
 
+</header>
+
+<!-- TÍTULO -->
+<h1 class="titulo">
+Servicios 💖
+</h1>
+
+<!-- CATEGORÍAS -->
 <div class="contenedor-categorias">
 
-  <div class="card">
-    <img src="img/unas.jpg">
-    <h3>Tratamientos De Manos y Pies</h3>
-    <button onclick="irCategoria('uñas')">Ver todos</button>
-  </div>
+<div class="card">
+<img src="img/unas.jpg" alt="Uñas">
+<h3>Tratamientos De Manos y Pies</h3>
+<button onclick="irCategoria('uñas')">
+Ver todos
+</button>
+</div>
 
-  <div class="card">
-    <img src="img/depilacion.jpg">
-    <h3>Depilación Facial y Corporal</h3>
-    <button onclick="irCategoria('depilacion')">Ver todos</button>
-  </div>
+<div class="card">
+<img src="img/depilacion.jpg" alt="Depilación">
+<h3>Depilación Facial y Corporal</h3>
+<button onclick="irCategoria('depilacion')">
+Ver todos
+</button>
+</div>
 
-  <div class="card">
-    <img src="img/cejas.jpg">
-    <h3>Tratamientos De Cejas</h3>
-    <button onclick="irCategoria('cejas')">Ver todos</button>
-  </div>
+<div class="card">
+<img src="img/cejas.jpg" alt="Cejas">
+<h3>Tratamientos De Cejas</h3>
+<button onclick="irCategoria('cejas')">
+Ver todos
+</button>
+</div>
 
-  <div class="card">
-    <img src="img/pestañas.jpg">
-    <h3>Tratamientos De Pestañas</h3>
-    <button onclick="irCategoria('pestañas')">Ver todos</button>
-  </div>
+<div class="card">
+<img src="img/pestañas.jpg" alt="Pestañas">
+<h3>Tratamientos De Pestañas</h3>
+<button onclick="irCategoria('pestañas')">
+Ver todos
+</button>
+</div>
 
 </div>
 
-<script>
-function irCategoria(cat){
-  localStorage.setItem("categoria", cat);
-  window.location.href = "categoria.html";
-}
+<!-- JS -->
+<script src="js/servicios.js"></script>
 
-// ================= VOLVER =================
-window.volver = () => {
-  window.location.href = "index.html";
-};
-</script>
-
+<!-- FOOTER -->
 <footer class="footer">
-    <div class="footer-content">
-      
-      <div class="footer-section">
-        <div class="logo-footer">💅Belleza</div>
-        <p>Realzando tu belleza natural con los mejores profesionales y productos de alta calidad.</p>
-      </div>
 
-      <div class="footer-section">
-        <h3>Horarios de Atención</h3>
-        <p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
-        <p>Sábados: 10:00 AM - 4:00 PM</p>
-        <p>Domingos: Cerrado</p>
-      </div>
+<div class="footer-content">
 
-      <div class="footer-section">
-        <h3>Contacto</h3>
-        <p>📍 Calle Belleza #123, Ciudad Belleza</p>
-        <p>📞 +123 456 7890</p>
-        <p>✉️ contacto@pwabelleza.com</p>
-      </div>
+<div class="footer-section">
+<div class="logo-footer">💅Belleza</div>
 
-    </div>
+<p>
+Realzando tu belleza natural con los mejores profesionales y productos de alta calidad.
+</p>
+</div>
 
-    <div class="footer-bottom">
-      &copy; 2026 Belleza - Todos los derechos reservados
-    </div>
-  </footer>
+<div class="footer-section">
+<h3>Horarios de Atención</h3>
+<p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
+<p>Sábados: 10:00 AM - 4:00 PM</p>
+<p>Domingos: Cerrado</p>
+</div>
 
-  
+<div class="footer-section">
+<h3>Contacto</h3>
+<p>📍 Calle Belleza #123, Ciudad Belleza</p>
+<p>📞 +123 456 7890</p>
+<p>✉️ contacto@pwabelleza.com</p>
+</div>
+
+</div>
+
+<div class="footer-bottom">
+&copy; 2026 Belleza - Todos los derechos reservados
+</div>
+
+</footer>
+
 </body>
 </html>
