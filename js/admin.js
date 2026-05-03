@@ -40,7 +40,7 @@ return;
 
 if(
 user.email !==
-"heidy.avilesp@uniagustiniana.edu.co"
+"kataaviles0711@gmail.com"
 ){
 window.location.href = "index.html";
 return;
@@ -459,5 +459,41 @@ telefono+
 );
 
 cargarCitas();
+
+};
+
+
+/* =========================================
+PROMOCIONES
+========================================= */
+
+window.crearPromo = async()=>{
+
+const titulo = document.getElementById("tituloPromo").value;
+const precioOriginal = Number(document.getElementById("precioOriginal").value);
+const descuento = Number(document.getElementById("descuento").value);
+
+const servicios = document.getElementById("serviciosPromo").value
+.split(",");
+
+const fechaInicio = document.getElementById("fechaInicio").value;
+const fechaFin = document.getElementById("fechaFin").value;
+
+const precioFinal = precioOriginal - (precioOriginal * descuento / 100);
+
+await addDoc(collection(db,"promociones"),{
+titulo,
+servicios,
+precioOriginal,
+precioFinal,
+descuento,
+activa:true,
+fechaInicio,
+fechaFin
+});
+
+alert("Promo creada 💖");
+
+location.reload();
 
 };

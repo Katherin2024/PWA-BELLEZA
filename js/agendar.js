@@ -194,6 +194,33 @@ actualizarVista();
 
 }
 
+/* Promociones */
+const promoServicios = JSON.parse(
+localStorage.getItem("promoServicios") || "[]"
+);
+
+/* SI ES PROMO */   
+if(promoServicios.length > 0){
+
+promoServicios.forEach(nombre=>{
+
+serviciosElegidos.push({
+nombre: nombre,
+minutos: 60
+});
+
+duracionTotal += 60;
+
+});
+
+actualizarVista();
+
+/* limpiar para no repetir */
+localStorage.removeItem("promoServicios");
+
+return;
+}
+
 }
 
 /* =========================================

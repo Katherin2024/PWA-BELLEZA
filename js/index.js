@@ -11,7 +11,9 @@ from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import {
 getFirestore,
 doc,
-getDoc
+getDoc,
+getDocs,       
+collection      
 }
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
@@ -234,3 +236,60 @@ moveNext,
 }
 
 });
+
+/* Promociones */
+
+async function cargarPromo(){
+
+const btn = document.getElementById("btnPromo");
+
+const snap = await getDocs(collection(db,"promociones"));
+
+let promoActiva = null;
+
+const hoy = new Date();
+
+snap.forEach(docSnap=>{
+
+const p = docSnap.data();
+
+const inicio = new Date(p.fechaInicio);
+const fin = new Date(p.fechaFin);
+
+if(p.activa && hoy >= inicio && hoy <= fin){
+promoActiva = p;
+}
+
+});
+
+if(!promoActiva){
+btn.style.display = "none";
+return;
+}
+
+btn.innerText = "🎁 " + promoActiva.titulo;
+
+btn.addEventListener("click", ()=>{
+
+console.log("CLICK PROMO"); // 👈 DEBUG
+
+localStorage.setItem("servicio", promoActiva.titulo);
+localStorage.setItem("precio", promoActiva.precioFinal);
+localStorage.setItem("duracion", promoActiva.duracion || "60");
+
+localStorage.setItem(
+"promoServicios",
+JSON.stringify(promoActiva.servicios)
+);
+
+/* 👇 PEQUEÑO DELAY PARA EVITAR QUE DESAPAREZCA */
+setTimeout(()=>{
+window.location.href = "agendar.html";
+},200);
+
+});
+
+}
+
+cargarPromo();
+

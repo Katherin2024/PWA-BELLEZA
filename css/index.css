@@ -249,6 +249,33 @@ transform:translateX(3px);
 transition:0.3s;
 }
 
+/* ==============PROMO================= */
+.btn-promo-float{
+position:fixed;
+bottom:20px;
+right:20px;
+
+background:linear-gradient(45deg,#ff3ea5,#ff9ad5);
+color:white;
+
+border:none;
+padding:14px 18px;
+border-radius:30px;
+
+font-weight:bold;
+font-size:14px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+z-index:999;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn-promo-float:hover{
+transform:scale(1.08);
+}
+
 
 /* ==================================================
    TABLET
