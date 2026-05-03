@@ -40,7 +40,7 @@ return;
 
 if(
 user.email !==
-"kataaviles0711@gmail.com"
+"heidy.avilesp@uniagustiniana.edu.co"
 ){
 window.location.href = "index.html";
 return;
