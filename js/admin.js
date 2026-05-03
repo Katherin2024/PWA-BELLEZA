@@ -463,37 +463,278 @@ cargarCitas();
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* =========================================
-PROMOCIONES
+PROMOCIONES (COMPLETO PRO)
 ========================================= */
 
-window.crearPromo = async()=>{
+/* CARGAR SERVICIOS EN SELECT */
+async function cargarServiciosPromo(){
 
-const titulo = document.getElementById("tituloPromo").value;
-const precioOriginal = Number(document.getElementById("precioOriginal").value);
-const descuento = Number(document.getElementById("descuento").value);
+const select = document.getElementById("serviciosPromo");
+if(!select) return;
 
-const servicios = document.getElementById("serviciosPromo").value
-.split(",");
+select.innerHTML = "";
 
-const fechaInicio = document.getElementById("fechaInicio").value;
-const fechaFin = document.getElementById("fechaFin").value;
+const snap = await getDocs(collection(db,"servicios"));
 
-const precioFinal = precioOriginal - (precioOriginal * descuento / 100);
+snap.forEach(docSnap=>{
 
-await addDoc(collection(db,"promociones"),{
-titulo,
-servicios,
-precioOriginal,
-precioFinal,
-descuento,
-activa:true,
-fechaInicio,
-fechaFin
+const s = docSnap.data();
+
+select.innerHTML += `
+<option value="${s.nombre}" data-precio="${s.precio}">
+${s.nombre} - $${Number(s.precio).toLocaleString()}
+</option>
+`;
+
 });
 
-alert("Promo creada 💖");
+}
+
+/* PERMITIR MULTI CLICK SIN CTRL */
+function activarMultiSelect(){
+
+const select = document.getElementById("serviciosPromo");
+
+if(!select) return;
+
+select.addEventListener("mousedown", function(e){
+
+e.preventDefault();
+
+const option = e.target;
+
+if(option.tagName === "OPTION"){
+option.selected = !option.selected;
+}
+
+actualizarResumen();
+
+return false;
+
+});
+
+}
+
+/* CALCULAR RESUMEN */
+function actualizarResumen(){
+
+const select = document.getElementById("serviciosPromo");
+const seleccionados = [...select.selectedOptions];
+
+let total = 0;
+
+seleccionados.forEach(opt=>{
+total += Number(opt.dataset.precio);
+});
+
+const descuento =
+Number(document.getElementById("descuentoPromo").value || 0);
+
+const final =
+total - (total * descuento / 100);
+
+/* MOSTRAR */
+document.getElementById("totalServicios").innerText =
+"Total servicios: $" + total.toLocaleString();
+
+document.getElementById("descuentoTexto").innerText =
+"Descuento: " + descuento + "%";
+
+document.getElementById("precioFinal").innerText =
+"Total final: $" + final.toLocaleString();
+
+}
+
+/* GUARDAR PROMO */
+window.crearPromo = async()=>{
+
+const titulo =
+document.getElementById("tituloPromo").value.trim();
+
+const descuento =
+Number(document.getElementById("descuentoPromo").value);
+
+const fechaInicio =
+document.getElementById("fechaInicio").value;
+
+const fechaFin =
+document.getElementById("fechaFin").value;
+
+const activa =
+document.getElementById("activaPromo").checked;
+
+const select =
+document.getElementById("serviciosPromo");
+
+const seleccionados = [...select.selectedOptions];
+
+const servicios = seleccionados.map(opt => opt.value);
+
+if(!titulo || servicios.length === 0){
+alert("Completa todo ⚠️");
+return;
+}
+
+/* CALCULAR */
+let total = 0;
+
+seleccionados.forEach(opt=>{
+total += Number(opt.dataset.precio);
+});
+
+const precioFinal =
+total - (total * descuento / 100);
+
+/* GUARDAR */
+await addDoc(collection(db,"promociones"),{
+
+titulo,
+servicios,
+precioOriginal: total,
+precioFinal,
+descuento,
+activa,
+fechaInicio,
+fechaFin
+
+});
+
+alert("Promo guardada 💖");
 
 location.reload();
 
 };
+
+/* LISTAR PROMOS */
+async function cargarPromos(){
+
+const contenedor =
+document.getElementById("listaPromos");
+
+if(!contenedor) return;
+
+contenedor.innerHTML = "";
+
+const snap =
+await getDocs(collection(db,"promociones"));
+
+snap.forEach(docSnap=>{
+
+const p = docSnap.data();
+const id = docSnap.id;
+
+contenedor.innerHTML += `
+<div class="admin-card">
+
+<h3>${p.titulo}</h3>
+
+<p>${p.servicios.join(" + ")}</p>
+
+<p><strong>$${Number(p.precioFinal).toLocaleString()}</strong></p>
+
+<p>${p.descuento}% OFF</p>
+
+<p style="color:${p.activa ? 'green' : 'red'};">
+${p.activa ? 'Activa' : 'Inactiva'}
+</p>
+
+<div style="margin-top:10px;">
+
+<button onclick="togglePromo('${id}', ${p.activa})">
+${p.activa ? 'Desactivar' : 'Activar'}
+</button>
+
+<button onclick="editarPromo('${id}')">
+Editar
+</button>
+
+<button onclick="eliminarPromo('${id}')">
+Eliminar
+</button>
+
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+/* ACTIVAR / DESACTIVAR */
+window.togglePromo = async(id, estadoActual)=>{
+
+await updateDoc(doc(db,"promociones",id),{
+activa: !estadoActual
+});
+
+cargarPromos();
+
+};
+
+/* EDITAR PROMO */
+window.editarPromo = async(id)=>{
+
+const snap = await getDoc(doc(db,"promociones",id));
+
+if(!snap.exists()) return;
+
+const p = snap.data();
+
+const nuevoTitulo = prompt("Nuevo nombre:", p.titulo);
+const nuevoDescuento = prompt("Nuevo descuento:", p.descuento);
+
+if(!nuevoTitulo || nuevoDescuento === null) return;
+
+const total = p.precioOriginal;
+const descuento = Number(nuevoDescuento);
+const precioFinal = total - (total * descuento / 100);
+
+await updateDoc(doc(db,"promociones",id),{
+
+titulo: nuevoTitulo,
+descuento,
+precioFinal
+
+});
+
+cargarPromos();
+
+};
+
+/* ELIMINAR */
+window.eliminarPromo = async(id)=>{
+
+await deleteDoc(doc(db,"promociones",id));
+
+location.reload();
+
+};
+
+/* INICIAR */
+document.addEventListener("DOMContentLoaded", ()=>{
+
+cargarServiciosPromo();
+cargarPromos();
+activarMultiSelect();
+
+/* EVENTO DESCUENTO */
+const descuento = document.getElementById("descuentoPromo");
+
+if(descuento){
+descuento.addEventListener("change", actualizarResumen);
+}
+
+});

@@ -39,6 +39,9 @@ let serviciosElegidos = [];
 let serviciosFirebase = [];
 let duracionTotal = 0;
 
+/* 💖 NUEVO */
+let esPromo = false;
+
 /* Valores pago */
 let totalGeneral = 0;
 let anticipoGeneral = 0;
@@ -100,9 +103,10 @@ CALCULAR PAGO
 ========================================= */
 function actualizarPago(){
 
+if(esPromo) return; // 🔥 NO recalcular promo
+
 let total = 0;
 
-/* Servicio principal */
 const precioPrincipal =
 Number(localStorage.getItem("precio") || 0);
 
@@ -110,15 +114,12 @@ if(serviciosElegidos.length > 0){
 total += precioPrincipal;
 }
 
-/* Extras */
 for(let i=1; i<serviciosElegidos.length; i++){
 
 const nombre = serviciosElegidos[i].nombre;
 
 const encontrado =
-serviciosFirebase.find(
-s => s.nombre === nombre
-);
+serviciosFirebase.find(s => s.nombre === nombre);
 
 if(encontrado){
 total += Number(encontrado.precio);
@@ -126,52 +127,82 @@ total += Number(encontrado.precio);
 
 }
 
-const anticipo =
-Math.round(total * 0.20);
+const anticipo = Math.round(total * 0.20);
+const saldo = total - anticipo;
 
-const saldo =
-total - anticipo;
-
-/* Guardar global */
 totalGeneral = total;
 anticipoGeneral = anticipo;
 saldoGeneral = saldo;
 
-/* Mostrar */
-const boxTotal =
-document.getElementById("valorTotal");
+document.getElementById("valorTotal").innerText =
+"Valor total: $" + total.toLocaleString();
 
-const boxAnticipo =
-document.getElementById("anticipo");
+document.getElementById("anticipo").innerText =
+"Anticipo (20%): $" + anticipo.toLocaleString();
 
-const boxSaldo =
-document.getElementById("saldo");
-
-if(boxTotal){
-boxTotal.innerText =
-"Valor total: $" +
-total.toLocaleString();
-}
-
-if(boxAnticipo){
-boxAnticipo.innerText =
-"Anticipo (20%): $" +
-anticipo.toLocaleString();
-}
-
-if(boxSaldo){
-boxSaldo.innerText =
-"Saldo restante: $" +
-saldo.toLocaleString();
-}
+document.getElementById("saldo").innerText =
+"Saldo restante: $" + saldo.toLocaleString();
 
 }
 
 /* =========================================
-SERVICIO PRINCIPAL
+SERVICIO PRINCIPAL + PROMO
 ========================================= */
 function cargarPrincipal(){
 
+const promo = JSON.parse(localStorage.getItem("promoActiva"));
+
+/* 🔥 PROMOCIÓN */
+if(promo){
+
+esPromo = true;
+
+serviciosElegidos = [];
+duracionTotal = 0;
+
+promo.servicios.forEach(nombre=>{
+serviciosElegidos.push({
+nombre,
+minutos:60
+});
+duracionTotal += 60;
+});
+
+/* 💰 precio fijo */
+totalGeneral = promo.precioFinal;
+anticipoGeneral = Math.round(totalGeneral * 0.20);
+saldoGeneral = totalGeneral - anticipoGeneral;
+
+/* 🚫 BLOQUEAR EXTRAS */
+const extra = document.getElementById("otroServicio");
+if(extra) extra.style.display = "none";
+
+const btnExtra =
+document.querySelector("button[onclick='agregarServicioExtra()']");
+if(btnExtra) btnExtra.style.display = "none";
+
+/* UI */
+document.getElementById("servicio").value = promo.titulo;
+
+document.getElementById("duracion").value =
+duracionTotal + " min + trayecto";
+
+document.getElementById("valorTotal").innerText =
+"Valor total: $" + totalGeneral.toLocaleString();
+
+document.getElementById("anticipo").innerText =
+"Anticipo (20%): $" + anticipoGeneral.toLocaleString();
+
+document.getElementById("saldo").innerText =
+"Saldo restante: $" + saldoGeneral.toLocaleString();
+
+/* limpiar */
+localStorage.removeItem("promoActiva");
+
+return;
+}
+
+/* ===== NORMAL ===== */
 const nombre =
 localStorage.getItem("servicio") || "";
 
@@ -184,41 +215,14 @@ obtenerMinutos(duracion);
 if(nombre){
 
 serviciosElegidos.push({
-nombre:nombre,
-minutos:minutos
+nombre,
+minutos
 });
 
 duracionTotal += minutos;
 
 actualizarVista();
 
-}
-
-/* Promociones */
-const promoServicios = JSON.parse(
-localStorage.getItem("promoServicios") || "[]"
-);
-
-/* SI ES PROMO */   
-if(promoServicios.length > 0){
-
-promoServicios.forEach(nombre=>{
-
-serviciosElegidos.push({
-nombre: nombre,
-minutos: 60
-});
-
-duracionTotal += 60;
-
-});
-
-actualizarVista();
-
-/* limpiar para no repetir */
-localStorage.removeItem("promoServicios");
-
-return;
 }
 
 }
@@ -228,11 +232,11 @@ SERVICIOS EXTRA
 ========================================= */
 async function cargarServicios(){
 
-const select =
-document.getElementById("otroServicio");
+if(esPromo) return; // 🔥 NO cargar extras en promo
 
-const snap =
-await getDocs(collection(db,"servicios"));
+const select = document.getElementById("otroServicio");
+
+const snap = await getDocs(collection(db,"servicios"));
 
 snap.forEach(docSnap=>{
 
@@ -241,13 +245,11 @@ const s = docSnap.data();
 serviciosFirebase.push(s);
 
 if(select){
-
 select.innerHTML += `
 <option value="${s.nombre}">
 ${s.nombre}
 </option>
 `;
-
 }
 
 });
@@ -261,8 +263,12 @@ AGREGAR EXTRA
 ========================================= */
 window.agregarServicioExtra = ()=>{
 
-const nombre =
-document.getElementById("otroServicio").value;
+if(esPromo){
+alert("Esta promoción no permite agregar más servicios 💖");
+return;
+}
+
+const nombre = document.getElementById("otroServicio").value;
 
 if(!nombre){
 alert("Selecciona un servicio ⚠️");
@@ -275,9 +281,7 @@ return;
 }
 
 const repetido =
-serviciosElegidos.some(
-s => s.nombre === nombre
-);
+serviciosElegidos.some(s => s.nombre === nombre);
 
 if(repetido){
 alert("Ese servicio ya fue agregado ⚠️");
@@ -285,30 +289,19 @@ return;
 }
 
 const encontrado =
-serviciosFirebase.find(
-s => s.nombre === nombre
-);
+serviciosFirebase.find(s => s.nombre === nombre);
 
 if(!encontrado) return;
 
-const minutos =
-obtenerMinutos(encontrado.duracion);
+const minutos = obtenerMinutos(encontrado.duracion);
 
-serviciosElegidos.push({
-nombre:nombre,
-minutos:minutos
-});
-
+serviciosElegidos.push({nombre,minutos});
 duracionTotal += minutos;
 
 actualizarVista();
 
-const fecha =
-document.getElementById("fecha").value;
-
-if(fecha){
-cargarHorasDisponibles();
-}
+const fecha = document.getElementById("fecha").value;
+if(fecha) cargarHorasDisponibles();
 
 };
 
@@ -317,81 +310,53 @@ HORARIOS DISPONIBLES
 ========================================= */
 async function cargarHorasDisponibles(){
 
-const fecha =
-document.getElementById("fecha").value;
-
-const select =
-document.getElementById("hora");
+const fecha = document.getElementById("fecha").value;
+const select = document.getElementById("hora");
 
 select.innerHTML =
 `<option value="">⏰ Selecciona hora</option>`;
 
 if(!fecha) return;
 
-const totalMin =
-duracionTotal + trayectoMin;
+const totalMin = duracionTotal + trayectoMin;
 
-const snap =
-await getDocs(collection(db,"citas"));
+const snap = await getDocs(collection(db,"citas"));
 
 const hoy = new Date();
-const hoyTexto =
-hoy.toISOString().split("T")[0];
-
-const horaActualMin =
-hoy.getHours()*60 + hoy.getMinutes();
+const hoyTexto = hoy.toISOString().split("T")[0];
+const horaActualMin = hoy.getHours()*60 + hoy.getMinutes();
 
 horasBase.forEach(horaTexto=>{
 
-const [h,m] =
-horaTexto.split(":");
+const [h,m] = horaTexto.split(":");
 
-const inicioMin =
-Number(h)*60 + Number(m);
+const inicioMin = Number(h)*60 + Number(m);
+const finMin = inicioMin + totalMin;
 
-const finMin =
-inicioMin + totalMin;
+if(finMin > 1080) return;
 
-if(finMin > 1080){
-return;
-}
-
-/* Si es hoy ocultar pasadas */
 if(fecha === hoyTexto){
-
-if(inicioMin <= horaActualMin + 30){
-return;
-}
-
+if(inicioMin <= horaActualMin + 30) return;
 }
 
 let ocupado = false;
 
 snap.forEach(docSnap=>{
-
 const c = docSnap.data();
 
 if(c.fecha === fecha){
-
-if(
-inicioMin < c.finMin &&
-finMin > c.inicioMin
-){
+if(inicioMin < c.finMin && finMin > c.inicioMin){
 ocupado = true;
 }
-
 }
-
 });
 
 if(!ocupado){
-
 select.innerHTML += `
 <option value="${horaTexto}">
 ${formatoHora(horaTexto)}
 </option>
 `;
-
 }
 
 });
@@ -404,43 +369,24 @@ USUARIO + DIRECCIONES
 onAuthStateChanged(auth, async(user)=>{
 
 if(!user){
-
 alert("Debes iniciar sesión ⚠️");
 window.location.href = "login.html";
 return;
-
 }
 
-const snap =
-await getDoc(
-doc(db,"usuarios",user.uid)
-);
+const snap = await getDoc(doc(db,"usuarios",user.uid));
 
 if(snap.exists()){
 
 const data = snap.data();
-
-const select =
-document.getElementById("direccion");
+const select = document.getElementById("direccion");
 
 if(data.direccion1){
-
-select.innerHTML += `
-<option value="${data.direccion1}">
-${data.direccion1}
-</option>
-`;
-
+select.innerHTML += `<option value="${data.direccion1}">${data.direccion1}</option>`;
 }
 
 if(data.direccion2){
-
-select.innerHTML += `
-<option value="${data.direccion2}">
-${data.direccion2}
-</option>
-`;
-
+select.innerHTML += `<option value="${data.direccion2}">${data.direccion2}</option>`;
 }
 
 }
@@ -452,148 +398,82 @@ GUARDAR CITA
 ========================================= */
 window.guardarCita = async()=>{
 
-const fecha =
-document.getElementById("fecha").value;
-
-const hora =
-document.getElementById("hora").value;
-
-const direccion =
-document.getElementById("direccion").value;
+const fecha = document.getElementById("fecha").value;
+const hora = document.getElementById("hora").value;
+const direccion = document.getElementById("direccion").value;
 
 if(!fecha || !hora || !direccion){
-
 alert("Completa todos los campos ⚠️");
 return;
-
 }
 
-/* Validar lunes martes */
-const fechaObj =
-new Date(fecha + "T12:00:00");
-
-const dia =
-fechaObj.getDay();
+const fechaObj = new Date(fecha + "T12:00:00");
+const dia = fechaObj.getDay();
 
 if(dia === 1 || dia === 2){
-
 alert("No laboramos lunes ni martes 💖");
 return;
-
 }
 
-const [h,m] =
-hora.split(":");
+const [h,m] = hora.split(":");
 
-const inicioMin =
-Number(h)*60 + Number(m);
+const inicioMin = Number(h)*60 + Number(m);
+const finMin = inicioMin + duracionTotal + trayectoMin;
 
-const finMin =
-inicioMin +
-duracionTotal +
-trayectoMin;
+await addDoc(collection(db,"citas"),{
 
-try{
-
-await addDoc(
-collection(db,"citas"),
-{
 usuario: auth.currentUser.email,
 
-servicio:
-serviciosElegidos
-.map(s=>s.nombre)
-.join(" + "),
+servicio: serviciosElegidos.map(s=>s.nombre).join(" + "),
 
 fecha,
 hora,
 direccion,
 
-duracionMin:
-duracionTotal,
-
+duracionMin: duracionTotal,
 trayectoMin,
 
 inicioMin,
 finMin,
 
-valorTotal:
-totalGeneral,
+valorTotal: totalGeneral,
+anticipo: anticipoGeneral,
+saldo: saldoGeneral,
 
-anticipo:
-anticipoGeneral,
+estadoPago:"pendiente",
+estado:"pendiente"
 
-saldo:
-saldoGeneral,
+});
 
-estadoPago:
-"pendiente",
+alert(`Anticipo: $${anticipoGeneral.toLocaleString()}`);
 
-estado:
-"pendiente"
-}
-);
-
-alert(
-`Para asegurar tu cita debes pagar el 20% 💖
-
-Anticipo: $${anticipoGeneral.toLocaleString()}`
-);
-
-window.location.href =
-"mis-citas.html";
-
-}catch(error){
-
-alert(
-"Error: " + error.message
-);
-
-}
+window.location.href = "mis-citas.html";
 
 };
 
 /* =========================================
-CALENDARIO PREMIUM
+BLOQUEO DÍAS + HORAS
 ========================================= */
-const inputFecha =
-document.getElementById("fecha");
+const inputFecha = document.getElementById("fecha");
 
 if(inputFecha){
 
 const hoy = new Date();
 
-const yyyy =
-hoy.getFullYear();
+const yyyy = hoy.getFullYear();
+const mm = String(hoy.getMonth()+1).padStart(2,"0");
+const dd = String(hoy.getDate()).padStart(2,"0");
 
-const mm =
-String(hoy.getMonth()+1)
-.padStart(2,"0");
+inputFecha.min = `${yyyy}-${mm}-${dd}`;
 
-const dd =
-String(hoy.getDate())
-.padStart(2,"0");
+inputFecha.addEventListener("change", ()=>{
 
-inputFecha.min =
-`${yyyy}-${mm}-${dd}`;
-
-inputFecha.addEventListener(
-"change",
-()=>{
-
-const fechaSel =
-new Date(
-inputFecha.value + "T12:00:00"
-);
-
-const dia =
-fechaSel.getDay();
+const fechaSel = new Date(inputFecha.value + "T12:00:00");
+const dia = fechaSel.getDay();
 
 if(dia === 1 || dia === 2){
 
-alert(
-"No laboramos lunes ni martes 💖"
-);
+alert("No laboramos lunes ni martes 💖");
 
 inputFecha.value = "";
 
@@ -601,25 +481,13 @@ document.getElementById("hora").innerHTML =
 `<option value="">⏰ Selecciona hora</option>`;
 
 return;
-
 }
 
 cargarHorasDisponibles();
 
-}
-);
+});
 
 }
-
-/* =========================================
-VOLVER
-========================================= */
-window.volver = ()=>{
-
-window.location.href =
-"servicios.html";
-
-};
 
 /* =========================================
 INICIAR

@@ -486,3 +486,86 @@ text-align:center;
 }
 
 }
+
+
+
+
+
+/* LISTA SERVICIOS PROMO */
+.promo-servicios{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin:10px 0;
+}
+
+/* CARD SERVICIO */
+.promo-card{
+background:#ffeef4;
+padding:12px;
+border-radius:12px;
+cursor:pointer;
+transition:0.2s;
+border:2px solid transparent;
+user-select:none;
+text-align:center;
+}
+
+.promo-card:hover{
+transform:scale(1.03);
+}
+
+.promo-card:active{
+transform:scale(0.95);
+}
+
+.promo-card.active{
+border:2px solid #ff5c9a;
+background:#ffd6e7;
+}
+
+.select-servicios{
+width:100%;
+padding:10px;
+border-radius:12px;
+border:1px solid #ffc1d6;
+min-height:120px;
+background:#fff0f5;
+font-size:14px;
+cursor:pointer;
+}
+
+#serviciosPromo{
+width:100%;
+padding:10px;
+border-radius:12px;
+border:1px solid #ffc1d6;
+background:#fff0f5;
+font-size:14px;
+min-height:120px;
+}
+
+#serviciosPromo option:checked{
+background:#ff5c9a;
+color:white;
+}
+
+.admin-card button{
+margin:5px;
+padding:8px 12px;
+border:none;
+border-radius:10px;
+background:#ff5c9a;
+color:white;
+cursor:pointer;
+font-size:12px;
+}
+
+
+
+
+
+
+
+
+

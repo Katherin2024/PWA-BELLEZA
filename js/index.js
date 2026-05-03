@@ -237,59 +237,141 @@ moveNext,
 
 });
 
-/* Promociones */
 
-async function cargarPromo(){
 
-const btn = document.getElementById("btnPromo");
+
+/* =========================================
+PROMOCIONES (UI + FIREBASE - FIX FINAL)
+========================================= */
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+/* ELEMENTOS */
+const btnPromo = document.getElementById("btnPromoFloat");
+const panelPromo = document.getElementById("panelPromo");
+const overlay = document.getElementById("overlayPromo");
+const cerrar = document.getElementById("cerrarPromo");
+
+/* VALIDACIÓN */
+if(!btnPromo || !panelPromo){
+console.warn("Promo UI no encontrada");
+return;
+}
+
+/* ABRIR PANEL */
+btnPromo.addEventListener("click", ()=>{
+panelPromo.classList.add("active");
+if(overlay) overlay.classList.add("active");
+});
+
+/* CERRAR PANEL */
+if(cerrar){
+cerrar.addEventListener("click", cerrarPanel);
+}
+
+if(overlay){
+overlay.addEventListener("click", cerrarPanel);
+}
+
+function cerrarPanel(){
+panelPromo.classList.remove("active");
+if(overlay) overlay.classList.remove("active");
+}
+
+/* =========================================
+CARGAR PROMOS
+========================================= */
+async function cargarPromosIndex(){
+
+const contenedor = document.getElementById("listaPromosIndex");
+
+if(!contenedor) return;
+
+try{
 
 const snap = await getDocs(collection(db,"promociones"));
 
-let promoActiva = null;
+contenedor.innerHTML = "";
 
-const hoy = new Date();
+let contador = 0;
 
 snap.forEach(docSnap=>{
 
 const p = docSnap.data();
 
-const inicio = new Date(p.fechaInicio);
-const fin = new Date(p.fechaFin);
+/* Solo activas */
+if(!p.activa) return;
 
-if(p.activa && hoy >= inicio && hoy <= fin){
-promoActiva = p;
-}
+/* Máximo 3 */
+if(contador >= 3) return;
+
+contador++;
+
+contenedor.innerHTML += `
+<div class="promo-card-index">
+
+<h4>${p.titulo}</h4>
+
+<p class="promo-servicios-list">
+${p.servicios.join(" + ")}
+</p>
+
+<p class="promo-precio">
+$${Number(p.precioFinal).toLocaleString()}
+</p>
+
+<button onclick="usarPromo('${docSnap.id}')">
+Reservar
+</button>
+
+</div>
+`;
 
 });
 
-if(!promoActiva){
-btn.style.display = "none";
-return;
+/* Sin promos */
+if(contador === 0){
+contenedor.innerHTML =
+"<p style='text-align:center;'>No hay promociones activas 💔</p>";
 }
 
-btn.innerText = "🎁 " + promoActiva.titulo;
+}catch(error){
+console.error("Error cargando promos:", error);
+}
 
-btn.addEventListener("click", ()=>{
+}
 
-console.log("CLICK PROMO"); // 👈 DEBUG
+/* =========================================
+USAR PROMO
+========================================= */
+window.usarPromo = async(id)=>{
 
-localStorage.setItem("servicio", promoActiva.titulo);
-localStorage.setItem("precio", promoActiva.precioFinal);
-localStorage.setItem("duracion", promoActiva.duracion || "60");
+try{
 
+const snap = await getDoc(doc(db,"promociones",id));
+
+if(!snap.exists()) return;
+
+const promo = snap.data();
+
+/* Guardar promo */
 localStorage.setItem(
-"promoServicios",
-JSON.stringify(promoActiva.servicios)
+"promoActiva",
+JSON.stringify(promo)
 );
 
-/* 👇 PEQUEÑO DELAY PARA EVITAR QUE DESAPAREZCA */
-setTimeout(()=>{
+/* Redirigir */
 window.location.href = "agendar.html";
-},200);
 
-});
+}catch(error){
+
+console.error("Error usando promo:", error);
 
 }
 
-cargarPromo();
+};
 
+/* INICIAR */
+cargarPromosIndex();
+
+});

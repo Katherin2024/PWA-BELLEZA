@@ -55,7 +55,7 @@ Panel Administrador 👩‍💼
 <option value="cejas">Cejas</option>
 <option value="depilacion">Depilación</option>
 <option value="pestañas">Pestañas</option>
-<option value="Maquillaje">Maquillaje</option>
+<option value="maquillaje">Maquillaje</option>
 
 </select>
 
@@ -90,28 +90,66 @@ Citas de Clientes 📅
 </section>
 
 
-<!-- Promociomes -->
-<section>
+
+
+
+
+
+
+
+
+
+
+
+<!-- PROMOCIONES -->
+<section id="promociones">
 
 <div class="admin-box">
 
 <h2>Promociones 🎁</h2>
 
-<input id="tituloPromo" placeholder="Título">
-<input id="precioOriginal" placeholder="Precio original">
-<input id="descuento" placeholder="% descuento">
-<input id="serviciosPromo" placeholder="Servicios separados por coma">
+<input type="text" id="tituloPromo" placeholder="Nombre promo">
+
+<!-- LISTA SERVICIOS -->
+<select id="serviciosPromo" multiple></select>
+
+<!-- RESUMEN -->
+<div class="resumen-promo">
+<p id="totalServicios">Total servicios: $0</p>
+<p id="descuentoTexto">Descuento: 0%</p>
+<p id="precioFinal" class="total-final">Total final: $0</p>
+</div>
+
+<select id="descuentoPromo">
+<option value="0">0%</option>
+<option value="10">10%</option>
+<option value="20">20%</option>
+<option value="30">30%</option>
+<option value="40">40%</option>
+<option value="50">50%</option>
+</select>
 
 <input type="date" id="fechaInicio">
 <input type="date" id="fechaFin">
 
-<button onclick="crearPromo()">
-Crear Promo
-</button>
+<label>
+<input type="checkbox" id="activaPromo" checked>
+Activa
+</label>
+
+<button onclick="crearPromo()">Guardar Promoción</button>
 
 </div>
 
+<h2 class="titulo">Promos creadas 💖</h2>
+<div id="listaPromos" class="admin-list"></div>
+
 </section>
+
+
+
+
+
 
 
 <a href="#agregar" class="btn-subir-admin">↑</a>
