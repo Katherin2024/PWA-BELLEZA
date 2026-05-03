@@ -95,10 +95,9 @@ flex-wrap:wrap;
    SALUDO
 ======================================================= */
 .saludo{
-    text-align:center;
-    font-size:48px;
-    margin:35px 15px 25px;
-    color:#222;
+   text-align:center;
+   margin:15px;
+   font-size:23px;
 }
 
 /* =======================================================
@@ -403,10 +402,6 @@ transition:0.3s;
 }
 
 
-
-
-
-
 /* =======================================================
    RESPONSIVE TABLET
 ======================================================= */
@@ -476,6 +471,10 @@ width:52px;
 height:52px;
 font-size:20px;
 }
+.saludo{
+    font-size:23px;
+    padding:10px;
+  }
 
 .footer{
 padding:35px 15px 15px;
