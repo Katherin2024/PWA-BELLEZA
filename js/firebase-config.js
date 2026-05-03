@@ -23,14 +23,14 @@ from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 CONFIGURACIÓN FIREBASE
 ========================================= */
 const firebaseConfig = {
-    apiKey: "AIzaSyCC2vUEI-xh4gbOYGBnUXFy4kl9jnsvK6c",
-    authDomain: "pwabelleza-final.firebaseapp.com",
-    projectId: "pwabelleza-final",
-    storageBucket: "pwabelleza-final.firebasestorage.app",
-    messagingSenderId: "5201396323",
-    appId: "1:5201396323:web:ea9972086fa89784832e56",
-    measurementId: "G-M7H883L2FB"
-  };
+  apiKey: "AIzaSyC7Q6Kvn0klC_OIByWIWe4-o7NiJ1D0SLQ",
+  authDomain: "pwabelleza.firebaseapp.com",
+  projectId: "pwabelleza",
+  storageBucket: "pwabelleza.firebasestorage.app",
+  messagingSenderId: "36813965033",
+  appId: "1:36813965033:web:9b760c75eade1e2b079278",
+  measurementId: "G-T8YZD0F5T0"
+};
 
 /* =========================================
 INICIALIZAR APP
