@@ -28,7 +28,7 @@ overflow-x:hidden;
 /* =======================================================
    TIPOGRAFÍA
 ======================================================= */
-h1,h2,h3,.titulo,.logo,.logo-footer{
+h1,h2,h3,.titulo,.logo{
 font-family:'Great Vibes',cursive;
 font-weight:400;
 letter-spacing:1px;
@@ -90,6 +90,15 @@ display:flex;
 align-items:center;
 gap:12px;
 flex-wrap:wrap;
+}
+/* =======================================================
+   SALUDO
+======================================================= */
+.saludo{
+    text-align:center;
+    font-size:48px;
+    margin:35px 15px 25px;
+    color:#222;
 }
 
 /* =======================================================
@@ -342,12 +351,12 @@ background:linear-gradient(135deg,#f4a4b6,#ea5b7d);
 /* =======================================================
    FOOTER PREMIUM
 ======================================================= */
+
 .footer{
 margin-top:60px;
-padding:45px 20px 15px;
-
-background:linear-gradient(135deg,#d18bab,#b96b93);
-color:white;
+padding:50px 20px 20px;
+background:linear-gradient(135deg,#ce495d,#da8ba9,#b97ac0);
+box-shadow:0 -5px 20px rgba(0,0,0,0.15);
 }
 
 .footer-content{
@@ -363,29 +372,40 @@ gap:30px;
 font-family:'Poppins',sans-serif;
 font-size:18px;
 margin-bottom:14px;
-color:#fff7fb;
+color:#ffe6f0;
+transition:0.3s;
+}
+
+.footer-section h3:hover{
+color:white;
+letter-spacing:1px;
 }
 
 .footer-section p{
 font-size:14px;
 margin:7px 0;
 color:#fff0f7;
-}
-
-.logo-footer{
-font-size:42px;
-color:white;
-margin-bottom:10px;
+opacity:0.95;
 }
 
 .footer-bottom{
 text-align:center;
 margin-top:28px;
 padding-top:18px;
-border-top:1px solid rgba(255,255,255,.2);
+border-top:1px solid rgba(255,255,255,.25);
 font-size:13px;
-color:#fff0f7;
+color:#ffeaf3;
 }
+.footer-section p:hover{
+color:rgb(30, 25, 25);
+transform:translateX(3px);
+transition:0.3s;
+}
+
+
+
+
+
 
 /* =======================================================
    RESPONSIVE TABLET

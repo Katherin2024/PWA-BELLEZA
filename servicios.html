@@ -8,27 +8,32 @@
 <title>Servicios</title>
 
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/index.css">
 
 </head>
+<!-- HEADER -->
+<header>
+
+<nav class="menu">
+
+<button id="btnLogin" onclick="irLogin()">
+Inicia Sesion
+</button>
+
+<button id="btnLogout" onclick="cerrarSesion()">
+Cerrar Sesion
+</button>
+
+</nav>
+
+</header>
 
 <body>
 
 <!-- BOTÓN VOLVER -->
-<button
-class="btn-volver-float"
-onclick="volver()">
-⬅
-</button>
+<button class="btn-volver-float" onclick="volver()"> ⬅ </button>
 
-<!-- HEADER -->
-<header class="header">
-
-<div class="logo">
-💅 Belleza
-</div>
-
-</header>
+<!-- SALUDO -->
+<h2 id="saludo" class="saludo"></h2>
 
 <!-- TÍTULO -->
 <h1 class="titulo">
@@ -82,6 +87,8 @@ Ver todos
 
 <!-- JS -->
 <script src="js/servicios.js"></script>
+<script type="module" src="js/index.js"></script>
+
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -98,15 +105,15 @@ Realzando tu belleza natural con los mejores profesionales y productos de alta c
 
 <div class="footer-section">
 <h3>Horarios de Atención</h3>
-<p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
-<p>Sábados: 10:00 AM - 4:00 PM</p>
-<p>Domingos: Cerrado</p>
+<p>Lunes - Martes: Cerrado </p>
+<p>Miercoles a Viernes: 8:00 AM - 4:00 PM</p>
+<p>Sabados - Domingos: 8:00 AM - 4:00 PM</p>
 </div>
 
 <div class="footer-section">
 <h3>Contacto</h3>
 <p>📍 Calle Belleza #123, Ciudad Belleza</p>
-<p>📞 +123 456 7890</p>
+<p>📞 +57 322 725 7705</p>
 <p>✉️ contacto@pwabelleza.com</p>
 </div>
 

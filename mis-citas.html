@@ -10,8 +10,24 @@
 <link rel="stylesheet" href="css/style.css">
 
 </head>
+<!-- HEADER -->
+<header>
+<nav class="menu">
+
+<button id="btnLogin" onclick="irLogin()">
+Inicia Sesion
+</button>
+
+<button id="btnLogout" onclick="cerrarSesion()">
+Cerrar Sesion
+</button>
+</nav>
+
+</header>
 
 <body>
+    <!-- SALUDO -->
+<h2 id="saludo" class="saludo"></h2>
 
 <!-- BOTÓN VOLVER -->
 <button
@@ -37,6 +53,7 @@ class="mis-citas-grid">
 
 <!-- JS EXTERNO -->
 <script type="module" src="js/mis-citas.js"></script>
+<script type="module" src="js/index.js"></script>
 
 </body>
 </html>

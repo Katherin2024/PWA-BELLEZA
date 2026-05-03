@@ -8,20 +8,6 @@
 /* ================= FUENTE ================= */
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap');
 
-/* ================= VARIABLES ================= */
-:root{
-    --rosa:#ff0080;
-    --rosa-suave:#ff4db2;
-    --rosa-claro:#ffd4ea;
-    --morado:#8b4ca8;
-    --blanco:#ffffff;
-    --texto:#2b2b2b;
-    --gris:#666;
-    --sombra:0 10px 30px rgba(0,0,0,.10);
-    --radio:24px;
-    --transicion:.30s ease;
-}
-
 /* =================BODY ================= */
 body{
     font-family:'Poppins',sans-serif;
@@ -33,7 +19,6 @@ body{
 
 /* ================= TITULOS ================= */
 h1,h2,h3,
-.logo,
 .saludo,
 .slide p{
     font-family:'Great Vibes',cursive;
@@ -59,8 +44,14 @@ h1,h2,h3{
 /* ================= LOGO ================= */
 .logo{
     font-size:34px;
-    color:var(--blanco);
+    color:white;
     white-space:nowrap;
+}
+.logo-footer{
+    font-size:38px;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
 .logo span{
@@ -209,48 +200,55 @@ h1,h2,h3{
 
 /* ================= FOOTER ================= */
 .footer{
-    margin-top:55px;
-    background:linear-gradient(45deg,#ff3ea5,#864786);
-    color:white;
-    padding:45px 20px 18px;
+margin-top:60px;
+padding:50px 20px 20px;
+background:linear-gradient(135deg,#ce495d,#da8ba9,#b97ac0);
+box-shadow:0 -5px 20px rgba(0,0,0,0.15);
 }
 
 .footer-content{
-    width:min(1200px,95%);
-    margin:auto;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:30px;
+max-width:1200px;
+margin:auto;
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:30px;
 }
 
 .footer-section h3{
-    font-size:20px;
-    margin-bottom:14px;
-    font-family:'Poppins',sans-serif;
+font-family:'Poppins',sans-serif;
+font-size:18px;
+margin-bottom:14px;
+color:#ffe6f0;
+transition:0.3s;
 }
 
-.logo-footer{
-    font-size:40px;
-    color:#ff8ad0;
-    margin-bottom:14px;
-    font-family:'Great Vibes',cursive;
+.footer-section h3:hover{
+color:white;
+letter-spacing:1px;
 }
 
 .footer-section p{
-    font-size:15px;
-    line-height:1.8;
-    color:#ffe0f0;
-    font-family:'Poppins',sans-serif;
+font-size:14px;
+margin:7px 0;
+color:#fff0f7;
+opacity:0.95;
 }
 
 .footer-bottom{
-    text-align:center;
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid rgba(255,255,255,.18);
-    font-size:14px;
-    color:#ffd6eb;
+text-align:center;
+margin-top:28px;
+padding-top:18px;
+border-top:1px solid rgba(255,255,255,.25);
+font-size:13px;
+color:#ffeaf3;
 }
+.footer-section p:hover{
+color:rgb(30, 25, 25);
+transform:translateX(3px);
+transition:0.3s;
+}
+
 
 /* ==================================================
    TABLET

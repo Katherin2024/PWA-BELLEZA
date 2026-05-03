@@ -8,11 +8,26 @@
 <title>Contáctanos</title>
 
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/index.css">
 
 </head>
 
+<!-- HEADER -->
+<header>
+<nav class="menu">
+
+<button id="btnLogin" onclick="irLogin()">
+Inicia Sesion
+</button>
+
+<button id="btnLogout" onclick="cerrarSesion()">
+Cerrar Sesion
+</button>
+
+</nav>
+</header>
 <body>
+    <!-- SALUDO -->
+<h2 id="saludo" class="saludo"></h2>
 
 <!-- FORMULARIO -->
 <div class="container">
@@ -44,6 +59,7 @@ Enviar
 
 <!-- JS EXTERNO -->
 <script type="module" src="js/contacto.js"></script>
+<script type="module" src="js/index.js"></script>
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -63,23 +79,17 @@ Realzando tu belleza natural con los mejores profesionales y productos de alta c
 </div>
 
 <div class="footer-section">
-
-<h3>Horarios de Atención</h3>
-
-<p>Lunes a Viernes: 9:00 AM - 7:00 PM</p>
-<p>Sábados: 10:00 AM - 4:00 PM</p>
-<p>Domingos: Cerrado</p>
-
+    <h3>Horarios de Atención</h3>
+    <p>Lunes - Martes: Cerrado </p>
+    <p>Miercoles a Viernes: 8:00 AM - 4:00 PM</p>
+    <p>Sabados - Domingos: 8:00 AM - 4:00 PM</p>
 </div>
 
 <div class="footer-section">
-
-<h3>Contacto</h3>
-
-<p>📍 Calle Belleza #123</p>
-<p>📞 +123 456 7890</p>
-<p>✉️ contacto@pwabelleza.com</p>
-
+    <h3>Contacto</h3>
+    <p>📍 Calle Belleza #123, Ciudad Belleza</p>
+    <p>📞 +57 322 725 7705</p>
+    <p>✉️ contacto@pwabelleza.com</p>
 </div>
 
 </div>
