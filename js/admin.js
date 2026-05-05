@@ -498,10 +498,13 @@ function activarMultiSelect(){
 const select = document.getElementById("serviciosPromo");
 if(!select) return;
 
-/* 🔥 DESKTOP */
-select.addEventListener("mousedown", function(e){
+/* 🔥 DETECTAR MOVIL REAL */
+const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-if(window.innerWidth > 768){
+/* 💻 PC */
+if(!esMovil){
+
+select.addEventListener("mousedown", function(e){
 
 e.preventDefault();
 
@@ -515,15 +518,17 @@ actualizarResumen();
 
 return false;
 
-}
 });
 
-/* 🔥 MOVIL */
+}
+
+/* 📱 MOVIL */
 select.addEventListener("change", ()=>{
 actualizarResumen();
 });
 
 }
+
 
 /* CALCULAR RESUMEN */
 function actualizarResumen(){
@@ -721,22 +726,32 @@ location.reload();
 
 };
 
-/* INICIAR */
+
+
 document.addEventListener("DOMContentLoaded", ()=>{
 
+/* PROMOCIONES */
 cargarServiciosPromo();
 cargarPromos();
 activarMultiSelect();
 
-/* EVENTO DESCUENTO */
 const descuento = document.getElementById("descuentoPromo");
-
 if(descuento){
 descuento.addEventListener("change", actualizarResumen);
 }
 
-});
+/* BOTONES REPORTES */
+const btnReporte = document.getElementById("btnReporte");
+if(btnReporte){
+btnReporte.addEventListener("click", generarReporteRango);
+}
 
+const btnExcel = document.getElementById("btnExcel");
+if(btnExcel){
+btnExcel.addEventListener("click", exportarExcel);
+}
+
+});
 
 
 
@@ -766,7 +781,14 @@ return citas;
 /* ===============================
 FILTRAR POR RANGO
 =============================== */
-async function generarReporteRango(){
+let bloqueado = false;
+
+window.generarReporteRango = async () => {
+
+if(bloqueado) return;
+bloqueado = true;
+
+try{
 
 const inicio = document.getElementById("fechaInicioReporte").value;
 const fin = document.getElementById("fechaFinReporte").value;
@@ -783,6 +805,16 @@ c.fecha >= inicio && c.fecha <= fin
 );
 
 procesarReporteAvanzado(filtradas);
+
+} catch(error){
+
+console.error("Error reporte:", error);
+
+} finally {
+
+bloqueado = false;
+
+}
 
 };
 
@@ -1036,29 +1068,6 @@ data: dataIngresos
 
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-
-/* BOTON REPORTE */
-const btnReporte = document.getElementById("btnReporte");
-if(btnReporte){
-btnReporte.addEventListener("click", generarReporteRango);
-}
-
-/* BOTON EXCEL */
-const btnExcel = document.getElementById("btnExcel");
-if(btnExcel){
-
-btnExcel.addEventListener("click", ()=>{
-
-console.log("CLICK EXCEL"); // 🔍 debug
-
-exportarExcel();
-
-});
-
-}
-
-});
 
 
 
