@@ -8,7 +8,8 @@ getDocs,
 addDoc,
 deleteDoc,
 doc,
-updateDoc
+updateDoc,
+getDoc
 }
 from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
@@ -495,10 +496,12 @@ ${s.nombre} - $${Number(s.precio).toLocaleString()}
 function activarMultiSelect(){
 
 const select = document.getElementById("serviciosPromo");
-
 if(!select) return;
 
+/* 🔥 DESKTOP */
 select.addEventListener("mousedown", function(e){
+
+if(window.innerWidth > 768){
 
 e.preventDefault();
 
@@ -512,6 +515,12 @@ actualizarResumen();
 
 return false;
 
+}
+});
+
+/* 🔥 MOVIL */
+select.addEventListener("change", ()=>{
+actualizarResumen();
 });
 
 }
@@ -594,6 +603,7 @@ servicios,
 precioOriginal: total,
 precioFinal,
 descuento,
+activa,
 fechaInicio,
 fechaFin
 
@@ -631,6 +641,10 @@ contenedor.innerHTML += `
 <p>${p.servicios.join(" + ")}</p>
 
 <p><strong>$${Number(p.precioFinal).toLocaleString()}</strong></p>
+
+<p style="color:${p.activa ? 'green' : 'red'};">
+${p.activa ? 'Activa' : 'Inactiva'}
+</p>
 
 <p>${p.descuento}% OFF</p>
 
@@ -707,34 +721,21 @@ location.reload();
 
 };
 
-
-
-
+/* INICIAR */
 document.addEventListener("DOMContentLoaded", ()=>{
 
-/* PROMOS */
 cargarServiciosPromo();
 cargarPromos();
 activarMultiSelect();
 
+/* EVENTO DESCUENTO */
 const descuento = document.getElementById("descuentoPromo");
+
 if(descuento){
 descuento.addEventListener("change", actualizarResumen);
 }
 
-/* BOTONES REPORTES */
-const btnExcel = document.getElementById("btnExcel");
-if(btnExcel){
-btnExcel.addEventListener("click", exportarExcel);
-}
-
-const btnReporte = document.getElementById("btnReporte");
-if(btnReporte){
-btnReporte.addEventListener("click", generarReporteRango);
-}
-
 });
-
 
 
 
@@ -907,32 +908,53 @@ generarGraficas(citas);
 /* ===============================
 EXPORTAR EXCEL 📥
 =============================== */
-window.exportarExcel = ()=>{
+async function exportarExcel(){
 
-if(!datosReporte || datosReporte.length === 0){
-alert("Primero genera un reporte ⚠️");
+const inicio = document.getElementById("fechaInicioReporte").value;
+const fin = document.getElementById("fechaFinReporte").value;
+
+if(!inicio || !fin){
+alert("Selecciona fechas ⚠️");
 return;
 }
 
-const worksheet =
-XLSX.utils.json_to_sheet(datosReporte);
+/* 🔥 OBTENER DATOS DIRECTO */
+const snap = await getDocs(collection(db,"citas"));
 
-const workbook =
-XLSX.utils.book_new();
+let citas = [];
 
-XLSX.utils.book_append_sheet(
-workbook,
-worksheet,
-"Reporte"
-);
+snap.forEach(doc=>{
+const c = doc.data();
 
-XLSX.writeFile(
-workbook,
-"reporte_belleza.xlsx"
-);
+if(c.fecha >= inicio && c.fecha <= fin){
+citas.push(c);
+}
 
-};
+});
 
+if(citas.length === 0){
+alert("No hay datos en ese rango ⚠️");
+return;
+}
+
+/* 🔥 FORMATO EXCEL */
+const data = citas.map(c => ({
+Fecha: c.fecha,
+Cliente: c.usuario,
+Servicio: c.servicio,
+Estado: c.estado,
+Total: c.valorTotal
+}));
+
+/* 🔥 CREAR ARCHIVO */
+const ws = XLSX.utils.json_to_sheet(data);
+const wb = XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(wb, ws, "Reporte");
+
+XLSX.writeFile(wb, "reporte_belleza.xlsx");
+
+}
 
 /* =========================================
 GRAFICAS 📊
@@ -1014,14 +1036,30 @@ data: dataIngresos
 
 }
 
-btnReporte.addEventListener("click", async ()=>{
+document.addEventListener("DOMContentLoaded", ()=>{
 
-btnReporte.innerText = "⏳ Generando...";
-btnReporte.disabled = true;
+/* BOTON REPORTE */
+const btnReporte = document.getElementById("btnReporte");
+if(btnReporte){
+btnReporte.addEventListener("click", generarReporteRango);
+}
 
-await generarReporteRango();
+/* BOTON EXCEL */
+const btnExcel = document.getElementById("btnExcel");
+if(btnExcel){
 
-btnReporte.innerText = "📊 Generar Reporte";
-btnReporte.disabled = false;
+btnExcel.addEventListener("click", ()=>{
+
+console.log("CLICK EXCEL"); // 🔍 debug
+
+exportarExcel();
 
 });
+
+}
+
+});
+
+
+
+
