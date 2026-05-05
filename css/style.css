@@ -200,25 +200,45 @@ resize:none;
 min-height:130px;
 }
 
+
+
+/* =========================================
+FIX REAL INPUT DATE (IPHONE) 📱
+========================================= */
 input[type="date"]{
+display:block;
 width:100%;
+min-height:48px;
 max-width:100%;
 box-sizing:border-box;
-appearance:none;
--webkit-appearance:none;
-background:white;
-font-size:14px;
+font-size:16px;
 }
 
-/* Evita desbordamiento en iPhone */
+/* Evita que crezca raro */
 input[type="date"]::-webkit-date-and-time-value{
-text-align:left;
+min-height:unset;
 }
 
-/* Contenedores seguros */
+/* CONTENEDOR FLEXIBLE */
 .admin-box{
-overflow:hidden;
+overflow:visible; /* 🔥 clave */
 }
+
+/* EVITA QUE SE SALGA */
+.admin-box input{
+width:100%;
+max-width:100%;
+}
+
+
+
+
+
+
+
+
+
+
 
 /* =======================================================
    PASSWORD BOX
