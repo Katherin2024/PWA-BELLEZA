@@ -463,17 +463,6 @@ cargarCitas();
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
 /* =========================================
 PROMOCIONES (COMPLETO PRO)
 ========================================= */
@@ -605,7 +594,6 @@ servicios,
 precioOriginal: total,
 precioFinal,
 descuento,
-activa,
 fechaInicio,
 fechaFin
 
@@ -645,10 +633,6 @@ contenedor.innerHTML += `
 <p><strong>$${Number(p.precioFinal).toLocaleString()}</strong></p>
 
 <p>${p.descuento}% OFF</p>
-
-<p style="color:${p.activa ? 'green' : 'red'};">
-${p.activa ? 'Activa' : 'Inactiva'}
-</p>
 
 <div style="margin-top:10px;">
 
@@ -735,6 +719,304 @@ const descuento = document.getElementById("descuentoPromo");
 
 if(descuento){
 descuento.addEventListener("change", actualizarResumen);
+}
+
+});
+
+
+/* =========================================
+REPORTES AVANZADOS 📊
+========================================= */
+
+let datosReporte = [];
+
+/* ===============================
+OBTENER CITAS
+=============================== */
+async function obtenerCitas(){
+
+const snap = await getDocs(collection(db,"citas"));
+
+let citas = [];
+
+snap.forEach(docSnap=>{
+citas.push(docSnap.data());
+});
+
+return citas;
+
+}
+
+/* ===============================
+FILTRAR POR RANGO
+=============================== */
+window.generarReporteRango = async()=>{
+
+const inicio = document.getElementById("fechaInicioReporte").value;
+const fin = document.getElementById("fechaFinReporte").value;
+
+if(!inicio || !fin){
+alert("Selecciona ambas fechas ⚠️");
+return;
+}
+
+const citas = await obtenerCitas();
+
+const filtradas = citas.filter(c => 
+c.fecha >= inicio && c.fecha <= fin
+);
+
+procesarReporteAvanzado(filtradas);
+
+};
+
+/* ===============================
+PROCESAR REPORTE AVANZADO
+=============================== */
+function procesarReporteAvanzado(citas){
+
+let total = 0;
+let atendidas = 0;
+let canceladas = 0;
+
+/* 🔥 NUEVO */
+let serviciosConteo = {};
+let ingresosPorDia = {};
+let clientesFrecuentes = {};
+
+/* RECORRER */
+citas.forEach(c => {
+
+total += Number(c.valorTotal || 0);
+
+if(c.estado === "aprobado") atendidas++;
+if(c.estado === "rechazado") canceladas++;
+
+/* ======================
+SERVICIOS MÁS PEDIDOS
+====================== */
+const listaServicios = c.servicio.split(" + ");
+
+listaServicios.forEach(s => {
+
+serviciosConteo[s] = (serviciosConteo[s] || 0) + 1;
+
+});
+
+/* ======================
+INGRESOS POR DÍA
+====================== */
+ingresosPorDia[c.fecha] =
+(ingresosPorDia[c.fecha] || 0) + Number(c.valorTotal || 0);
+
+/* ======================
+CLIENTES FRECUENTES
+====================== */
+clientesFrecuentes[c.usuario] =
+(clientesFrecuentes[c.usuario] || 0) + 1;
+
+});
+
+/* ======================
+TOP 5 SERVICIOS 🔥
+====================== */
+const topServicios = Object.entries(serviciosConteo)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,5);
+
+/* ======================
+MEJOR DÍA 💰
+====================== */
+const mejorDia = Object.entries(ingresosPorDia)
+.sort((a,b)=>b[1]-a[1])[0];
+
+/* ======================
+TOP CLIENTES 👩‍💼
+====================== */
+const topClientes = Object.entries(clientesFrecuentes)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,3);
+
+/* ======================
+PROMEDIO
+====================== */
+const promedio =
+citas.length > 0 ? total / citas.length : 0;
+
+/* ======================
+DATA EXCEL
+====================== */
+datosReporte = citas.map(c => ({
+Fecha: c.fecha,
+Cliente: c.usuario,
+Servicio: c.servicio,
+Estado: c.estado,
+Total: c.valorTotal
+}));
+
+/* ======================
+MOSTRAR RESULTADOS
+====================== */
+let mensaje = `
+📊 REPORTE AVANZADO
+
+💰 Total: $${total.toLocaleString()}
+📅 Citas: ${citas.length}
+✅ Atendidas: ${atendidas}
+❌ Canceladas: ${canceladas}
+📈 Promedio por cita: $${Math.round(promedio).toLocaleString()}
+
+🔥 TOP SERVICIOS:
+`;
+
+topServicios.forEach(s=>{
+mensaje += `\n• ${s[0]} (${s[1]})`;
+});
+
+if(mejorDia){
+mensaje += `\n\n💸 Mejor día: ${mejorDia[0]} ($${mejorDia[1].toLocaleString()})`;
+}
+
+mensaje += `\n\n👑 TOP CLIENTES:\n`;
+
+topClientes.forEach(c=>{
+mensaje += `• ${c[0]} (${c[1]} citas)\n`;
+});
+
+alert(mensaje);
+/* 🔥 GENERAR GRAFICAS */
+generarGraficas(citas);
+
+}
+
+/* ===============================
+EXPORTAR EXCEL 📥
+=============================== */
+window.exportarExcel = ()=>{
+
+if(!datosReporte || datosReporte.length === 0){
+alert("Primero genera un reporte ⚠️");
+return;
+}
+
+const worksheet =
+XLSX.utils.json_to_sheet(datosReporte);
+
+const workbook =
+XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(
+workbook,
+worksheet,
+"Reporte"
+);
+
+XLSX.writeFile(
+workbook,
+"reporte_belleza.xlsx"
+);
+
+};
+
+/* =========================================
+EVENTOS BOTONES REPORTES
+========================================= */
+document.addEventListener("DOMContentLoaded", ()=>{
+
+const btnExcel = document.getElementById("btnExcel");
+
+if(btnExcel){
+btnExcel.addEventListener("click", exportarExcel);
+}
+
+});
+
+/* =========================================
+GRAFICAS 📊
+========================================= */
+
+let chartServicios = null;
+let chartIngresos = null;
+
+function generarGraficas(citas){
+
+/* ======================
+SERVICIOS
+====================== */
+let serviciosConteo = {};
+
+citas.forEach(c => {
+
+const lista = c.servicio.split(" + ");
+
+lista.forEach(s=>{
+serviciosConteo[s] = (serviciosConteo[s] || 0) + 1;
+});
+
+});
+
+/* TOP */
+const labelsServicios = Object.keys(serviciosConteo);
+const dataServicios = Object.values(serviciosConteo);
+
+/* destruir si existe */
+if(chartServicios){
+chartServicios.destroy();
+}
+
+const ctx1 =
+document.getElementById("graficaServicios");
+
+chartServicios = new Chart(ctx1, {
+type: "bar",
+data: {
+labels: labelsServicios,
+datasets: [{
+label: "Servicios más solicitados",
+data: dataServicios
+}]
+}
+});
+
+/* ======================
+INGRESOS POR DIA
+====================== */
+let ingresos = {};
+
+citas.forEach(c=>{
+ingresos[c.fecha] =
+(ingresos[c.fecha] || 0) + Number(c.valorTotal || 0);
+});
+
+const labelsIngresos = Object.keys(ingresos);
+const dataIngresos = Object.values(ingresos);
+
+if(chartIngresos){
+chartIngresos.destroy();
+}
+
+const ctx2 =
+document.getElementById("graficaIngresos");
+
+chartIngresos = new Chart(ctx2, {
+type: "line",
+data: {
+labels: labelsIngresos,
+datasets: [{
+label: "Ingresos por día",
+data: dataIngresos
+}]
+}
+});
+
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+const btnReporte = document.getElementById("btnReporte");
+
+if(btnReporte){
+btnReporte.addEventListener("click", generarReporteRango);
 }
 
 });

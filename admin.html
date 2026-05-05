@@ -89,18 +89,6 @@ Citas de Clientes 📅
 
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- PROMOCIONES -->
 <section id="promociones">
 
@@ -132,11 +120,6 @@ Citas de Clientes 📅
 <input type="date" id="fechaInicio">
 <input type="date" id="fechaFin">
 
-<label>
-<input type="checkbox" id="activaPromo" checked>
-Activa
-</label>
-
 <button onclick="crearPromo()">Guardar Promoción</button>
 
 </div>
@@ -146,6 +129,76 @@ Activa
 
 </section>
 
+<!-- REPORTES -->
+
+<div class="admin-box">
+
+<h3>Generar Reportes</h3>
+
+<label>Fecha inicio</label>
+<input type="date" id="fechaInicioReporte">
+
+<label>Fecha fin</label>
+<input type="date" id="fechaFinReporte">
+
+<button id="btnReporte">
+📊 Generar Reporte
+</button>
+
+<button id="btnExcel">
+📥 Descargar Excel
+</button>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- GRAFICAS -->
+<section id="graficas">
+
+<h2 class="titulo">
+Estadísticas 📊
+</h2>
+
+<div class="admin-box">
+
+<canvas id="graficaServicios"></canvas>
+
+</div>
+
+<div class="admin-box">
+
+<canvas id="graficaIngresos"></canvas>
+
+</div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -153,6 +206,12 @@ Activa
 
 
 <a href="#agregar" class="btn-subir-admin">↑</a>
+
+<!-- Libreria reportes -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<!-- Libreria Graficas -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- JS EXTERNO -->
 <script type="module" src="js/admin.js"></script>

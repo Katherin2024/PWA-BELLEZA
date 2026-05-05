@@ -401,6 +401,18 @@ transform:translateX(3px);
 transition:0.3s;
 }
 
+/* REPORTES */
+#reportes .admin-box button{
+margin-top:10px;
+width:100%;
+}
+
+/* GRAFICAS */
+#graficaServicios,
+#graficaIngresos{
+margin-top:20px;
+}
+
 
 /* =======================================================
    RESPONSIVE TABLET
