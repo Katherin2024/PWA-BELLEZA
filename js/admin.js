@@ -707,21 +707,36 @@ location.reload();
 
 };
 
-/* INICIAR */
+
+
+
 document.addEventListener("DOMContentLoaded", ()=>{
 
+/* PROMOS */
 cargarServiciosPromo();
 cargarPromos();
 activarMultiSelect();
 
-/* EVENTO DESCUENTO */
 const descuento = document.getElementById("descuentoPromo");
-
 if(descuento){
 descuento.addEventListener("change", actualizarResumen);
 }
 
+/* BOTONES REPORTES */
+const btnExcel = document.getElementById("btnExcel");
+if(btnExcel){
+btnExcel.addEventListener("click", exportarExcel);
+}
+
+const btnReporte = document.getElementById("btnReporte");
+if(btnReporte){
+btnReporte.addEventListener("click", generarReporteRango);
+}
+
 });
+
+
+
 
 
 /* =========================================
@@ -750,7 +765,7 @@ return citas;
 /* ===============================
 FILTRAR POR RANGO
 =============================== */
-window.generarReporteRango = async()=>{
+async function generarReporteRango(){
 
 const inicio = document.getElementById("fechaInicioReporte").value;
 const fin = document.getElementById("fechaFinReporte").value;
@@ -918,18 +933,6 @@ workbook,
 
 };
 
-/* =========================================
-EVENTOS BOTONES REPORTES
-========================================= */
-document.addEventListener("DOMContentLoaded", ()=>{
-
-const btnExcel = document.getElementById("btnExcel");
-
-if(btnExcel){
-btnExcel.addEventListener("click", exportarExcel);
-}
-
-});
 
 /* =========================================
 GRAFICAS 📊
@@ -1011,12 +1014,14 @@ data: dataIngresos
 
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
+btnReporte.addEventListener("click", async ()=>{
 
-const btnReporte = document.getElementById("btnReporte");
+btnReporte.innerText = "⏳ Generando...";
+btnReporte.disabled = true;
 
-if(btnReporte){
-btnReporte.addEventListener("click", generarReporteRango);
-}
+await generarReporteRango();
+
+btnReporte.innerText = "📊 Generar Reporte";
+btnReporte.disabled = false;
 
 });
