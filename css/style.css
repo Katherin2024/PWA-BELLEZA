@@ -200,6 +200,26 @@ resize:none;
 min-height:130px;
 }
 
+input[type="date"]{
+width:100%;
+max-width:100%;
+box-sizing:border-box;
+appearance:none;
+-webkit-appearance:none;
+background:white;
+font-size:14px;
+}
+
+/* Evita desbordamiento en iPhone */
+input[type="date"]::-webkit-date-and-time-value{
+text-align:left;
+}
+
+/* Contenedores seguros */
+.admin-box{
+overflow:hidden;
+}
+
 /* =======================================================
    PASSWORD BOX
 ======================================================= */
