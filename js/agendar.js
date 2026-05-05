@@ -495,17 +495,3 @@ INICIAR
 cargarPrincipal();
 cargarServicios();
 
-function activarFecha(fakeId, realId){
-
-const fake = document.getElementById(fakeId);
-const real = document.getElementById(realId);
-
-fake.addEventListener("click", () => {
-real.showPicker(); // 🔥 abre calendario iPhone
-});
-
-real.addEventListener("change", () => {
-fake.value = real.value;
-});
-
-}

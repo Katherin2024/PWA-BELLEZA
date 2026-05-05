@@ -730,14 +730,6 @@ location.reload();
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-// 🔥 ACTIVAR FECHAS (iPhone FIX)
-activarFecha("fechaInicio", "fechaInicioReal");
-activarFecha("fechaFin", "fechaFinReal");
-activarFecha("fechaInicioReporte", "fechaInicioReporteReal");
-activarFecha("fechaFinReporte", "fechaFinReporteReal");
-
-   
-
 /* PROMOCIONES */
 cargarServiciosPromo();
 cargarPromos();
@@ -1072,20 +1064,6 @@ label: "Ingresos por día",
 data: dataIngresos
 }]
 }
-});
-
-}
-function activarFecha(fakeId, realId){
-
-const fake = document.getElementById(fakeId);
-const real = document.getElementById(realId);
-
-fake.addEventListener("click", () => {
-real.showPicker(); // 🔥 abre calendario iPhone
-});
-
-real.addEventListener("change", () => {
-fake.value = real.value;
 });
 
 }
