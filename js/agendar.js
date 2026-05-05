@@ -495,3 +495,13 @@ INICIAR
 cargarPrincipal();
 cargarServicios();
 
+/* =========================================
+VOLVER
+========================================= */
+window.volver = ()=>{
+
+window.location.href =
+"index.html";
+
+};
+
