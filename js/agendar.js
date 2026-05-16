@@ -323,6 +323,7 @@ const totalMin = duracionTotal + trayectoMin;
 const snap = await getDocs(collection(db,"citas"));
 
 const hoy = new Date();
+let disponibles = 0;
 const hoyTexto = hoy.toISOString().split("T")[0];
 const horaActualMin = hoy.getHours()*60 + hoy.getMinutes();
 
@@ -352,6 +353,9 @@ ocupado = true;
 });
 
 if(!ocupado){
+
+disponibles++;
+
 select.innerHTML += `
 <option value="${horaTexto}">
 ${formatoHora(horaTexto)}
@@ -360,7 +364,17 @@ ${formatoHora(horaTexto)}
 }
 
 });
+/* SIN HORARIOS */
+if(disponibles === 0){
 
+select.innerHTML =
+`
+<option value="">
+⚠️ No hay agenda disponible
+</option>
+`;
+
+}
 }
 
 /* =========================================

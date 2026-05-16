@@ -61,7 +61,7 @@ window.cerrarSesion = ()=>{
 
 signOut(auth).then(()=>{
 
-window.location.href = "login.html";
+window.location.href = "index.html";
 
 });
 
