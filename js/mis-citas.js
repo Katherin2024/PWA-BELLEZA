@@ -5,7 +5,6 @@ import {
 getFirestore,
 collection,
 getDocs,
-deleteDoc,
 updateDoc,
 doc,
 getDoc
@@ -46,6 +45,7 @@ collection(db,"citas")
 );
 
 let html = "";
+let historialHTML = "";
 
 /* Recorrer citas */
 snap.forEach(docSnap=>{
@@ -59,7 +59,11 @@ docSnap.id;
 /* Solo citas del usuario */
 if(cita.usuario === user.email){
 
-html += `
+const activa =
+cita.estado === "pendiente" ||
+cita.estado === "aprobado";
+
+const card = `
 <div class="mis-cita-card">
 
 <h3>${cita.servicio}</h3>
@@ -75,6 +79,20 @@ Estado:
 ${cita.estado || "pendiente"}
 </p>
 
+${
+(
+(cita.estado === "pendiente" ||
+cita.estado === "aprobado")
+&&
+(
+(new Date(`${cita.fecha}T${cita.hora}`) - new Date())
+/
+(1000 * 60 * 60)
+> 3
+)
+)
+?
+`
 <button
 onclick="editarDireccion('${id}')">
 Cambiar dirección 📍
@@ -84,11 +102,26 @@ Cambiar dirección 📍
 onclick="cancelarCita('${id}')">
 Cancelar ❌
 </button>
+`
+:
+""
+}
 
 </div>
 `;
 
+if(activa){
+
+html += card;
+
+}else{
+
+historialHTML += card;
+
 }
+
+}
+
 
 });
 
@@ -110,10 +143,42 @@ Agenda una nueva cita cuando quieras.
 }
 
 /* Mostrar */
-contenedor.innerHTML =
-html;
+contenedor.innerHTML = html;
+
+document.getElementById(
+"listaHistorial"
+).innerHTML = historialHTML;
 
 }
+
+/* =========================================
+MOSTRAR HISTORIAL
+========================================= */
+window.toggleHistorial = ()=>{
+
+const historial =
+document.getElementById("listaHistorial");
+
+const boton =
+document.getElementById("btnHistorial");
+
+if(historial.style.display === "none"){
+
+historial.style.display = "flex";
+
+boton.innerText =
+"Ocultar historial 📜";
+
+}else{
+
+historial.style.display = "none";
+
+boton.innerText =
+"Ver historial 📜";
+
+}
+
+};
 
 /* =========================================
 VALIDAR LOGIN
@@ -141,6 +206,49 @@ async(id)=>{
 
 const user =
 auth.currentUser;
+
+/* BUSCAR CITA */
+const citaSnap = await getDoc(
+doc(db,"citas",id)
+);
+
+if(!citaSnap.exists()) return;
+
+const cita = citaSnap.data();
+
+/* VALIDAR ESTADO */
+if(
+cita.estado === "atendida" ||
+cita.estado === "rechazado" ||
+cita.estado === "cancelada"
+){
+
+alert(
+"No puedes cambiar la dirección de esta cita ❌"
+);
+
+return;
+
+}
+
+/* VALIDAR TIEMPO */
+const ahora = new Date();
+
+const fechaHoraCita =
+new Date(`${cita.fecha}T${cita.hora}`);
+
+const diferenciaHoras =
+(fechaHoraCita - ahora) / (1000 * 60 * 60);
+
+if(diferenciaHoras <= 3){
+
+alert(
+"Solo puedes cambiar dirección con mínimo 3 horas de anticipación ⏰"
+);
+
+return;
+
+}
 
 /* Buscar usuario */
 const snap =
@@ -175,7 +283,7 @@ return;
 
 }
 
-/* Solicitar nueva */
+/* CAMBIARLA */
 const nueva =
 prompt(
 "Escribe exactamente una de estas direcciones:\n\n" +
@@ -212,25 +320,116 @@ location.reload();
 };
 
 /* =========================================
+WHATSAPP
+========================================= */
+function abrirWhatsApp(link){
+
+const esMovil =
+/Android|iPhone|iPad|iPod/i.test(
+navigator.userAgent
+);
+
+if(esMovil){
+
+window.location.href = link;
+
+}else{
+
+window.open(link,"_blank");
+
+}
+
+}
+
+/* =========================================
 CANCELAR CITA
 ========================================= */
-window.cancelarCita =
-async(id)=>{
+window.cancelarCita = async(id)=>{
 
-const confirmar =
-confirm(
+/* Buscar cita */
+const snap = await getDoc(
+doc(db,"citas",id)
+);
+
+if(!snap.exists()) return;
+
+const cita = snap.data();
+
+/* VALIDAR ESTADO */
+if(
+cita.estado === "atendida" ||
+cita.estado === "rechazado" ||
+cita.estado === "cancelada"
+){
+
+alert(
+"Esta cita ya no puede cancelarse ❌"
+);
+
+return;
+
+}
+
+/* VALIDAR TIEMPO */
+const ahora = new Date();
+
+const fechaHoraCita =
+new Date(`${cita.fecha}T${cita.hora}`);
+
+const diferenciaHoras =
+(fechaHoraCita - ahora) / (1000 * 60 * 60);
+
+/* MENOS DE 3 HORAS */
+if(diferenciaHoras <= 3){
+
+alert(
+"Solo puedes cancelar con mínimo 3 horas de anticipación ⏰"
+);
+
+return;
+
+}
+
+/* CONFIRMAR */
+const confirmar = confirm(
 "¿Cancelar esta cita?"
 );
 
 if(!confirmar) return;
 
-/* Eliminar */
-await deleteDoc(
-doc(db,"citas",id)
+/* CAMBIAR ESTADO */
+await updateDoc(
+doc(db,"citas",id),
+{
+estado:"cancelada"
+}
+);
+
+/* MENSAJE ADMIN */
+const mensaje =
+encodeURIComponent(
+`⚠️ CANCELACIÓN DE CITA
+
+👤 Cliente: ${cita.usuario}
+
+💅 Servicio: ${cita.servicio}
+
+📅 Fecha: ${cita.fecha}
+
+⏰ Hora: ${cita.hora}`
+);
+
+/* TU NUMERO */
+const telefonoAdmin =
+"573227257705";
+
+/* ABRIR WHATSAPP */
+abrirWhatsApp(
+`https://wa.me/${telefonoAdmin}?text=${mensaje}`
 );
 
 alert(
-"Cita cancelada 💔"
+"Cita cancelada correctamente 💔"
 );
 
 location.reload();
@@ -243,6 +442,6 @@ VOLVER
 window.volver = ()=>{
 
 window.location.href =
-"index.html";
+"servicios.html";
 
 };

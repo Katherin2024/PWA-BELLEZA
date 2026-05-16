@@ -277,6 +277,14 @@ if(c.estado === "rechazado"){
 color = "#ff1744";
 }
 
+if(c.estado === "atendida"){
+color = "#6c5ce7";
+}
+
+if(c.estado === "cancelada"){
+color = "#636e72";
+}
+
 /* GOOGLE CALENDAR */
 const fechaBase =
 c.fecha.replaceAll("-","");
@@ -326,6 +334,15 @@ font-weight:bold;
 ${c.estado || "pendiente"}
 </p>
 
+${
+c.estado !== "rechazado" &&
+c.estado !== "atendida"
+?
+`
+${
+c.estado === "pendiente"
+?
+`
 <button onclick="aprobar(
 '${id}',
 '${telefonoCliente}',
@@ -347,6 +364,15 @@ Aprobar ✅
 )">
 Rechazar ❌
 </button>
+`
+:
+""
+}
+
+`
+:
+""
+}
 
 ${
 c.estado === "aprobado"
@@ -355,10 +381,32 @@ c.estado === "aprobado"
 <button onclick="window.open('${linkCalendar}','_blank')">
 📅 Google Calendar
 </button>
+
+<button onclick="marcarAtendida('${id}')">
+✔ Atendida
+</button>
 `
 :
 ""
 }
+
+${
+c.estado === "atendida"
+?
+`
+<p style="
+margin-top:10px;
+font-weight:bold;
+color:#6c5ce7;
+">
+✅ Cita atendida
+</p>
+`
+:
+""
+}
+
+
 
 </div>
 `;
@@ -457,6 +505,21 @@ abrirWhatsApp(
 "https://wa.me/57"+
 telefono+
 "?text="+mensaje
+);
+cargarCitas();
+
+};
+
+/* =========================================
+MARCAR ATENDIDA
+========================================= */
+window.marcarAtendida = async(id)=>{
+
+await updateDoc(
+doc(db,"citas",id),
+{
+estado:"atendida"
+}
 );
 
 cargarCitas();
