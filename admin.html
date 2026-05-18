@@ -17,11 +17,23 @@
 
 <a href="index.html" class="logo">💅 Belleza Admin</a>
 
-<nav class="menu">
+<nav class="menu admin-menu">
 
-<a href="#agregar">Agregar</a>
-<a href="#servicios">Servicios</a>
-<a href="#citas">Citas</a>
+<button onclick="mostrarSeccion('citasSection')">
+📅 Gestionar Citas
+</button>
+
+<button onclick="mostrarSeccion('serviciosSection')">
+💅 Gestionar Servicios
+</button>
+
+<button onclick="mostrarSeccion('promosSection')">
+🎁 Gestionar Promociones
+</button>
+
+<button onclick="mostrarSeccion('reportesSection')">
+📊 Reportes
+</button>
 
 <button
 class="btn-solid"
@@ -38,7 +50,8 @@ Panel Administrador 👩‍💼
 </h1>
 
 <!-- AGREGAR -->
-<section id="agregar">
+<section id="serviciosSection"
+style="display:none;">
 
 <div class="admin-box">
 
@@ -65,10 +78,7 @@ Agregar Servicio
 
 </div>
 
-</section>
-
 <!-- SERVICIOS -->
-<section id="servicios">
 
 <h2 class="titulo">
 Servicios Registrados 💖
@@ -79,7 +89,7 @@ Servicios Registrados 💖
 </section>
 
 <!-- CITAS -->
-<section id="citas">
+<section id="citasSection">
 
 <h2 class="titulo">
 Citas de Clientes 📅
@@ -90,7 +100,8 @@ Citas de Clientes 📅
 </section>
 
 <!-- PROMOCIONES -->
-<section id="promociones">
+<section id="promosSection"
+style="display:none;">
 
 <div class="admin-box">
 
@@ -135,6 +146,8 @@ Activa
 </section>
 
 <!-- REPORTES -->
+<section id="reportesSection"
+style="display:none;">
 
 <div class="admin-box">
 
@@ -175,9 +188,36 @@ Estadísticas 📊
 </div>
 
 </section>
+</section>
+<script>
+
+function mostrarSeccion(id){
+
+const secciones = [
+
+"citasSection",
+"serviciosSection",
+"promosSection",
+"reportesSection"
+
+];
+
+secciones.forEach(sec=>{
+
+document.getElementById(sec)
+.style.display = "none";
+
+});
+
+document.getElementById(id)
+.style.display = "block";
+
+}
+
+</script>
 
 
-<a href="#agregar" class="btn-subir-admin">↑</a>
+<a href="#" class="btn-subir-admin">subir</a>
 
 <!-- Libreria reportes -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>

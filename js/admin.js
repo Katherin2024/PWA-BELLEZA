@@ -92,6 +92,7 @@ window.open(link,"_blank");
 /* =========================================
 AGREGAR SERVICIO
 ========================================= */
+
 window.agregarServicio = async()=>{
 
 const nombre =
@@ -221,6 +222,7 @@ doc(db,"servicios",id)
 location.reload();
 
 };
+
 
 /* =========================================
 CARGAR CITAS
