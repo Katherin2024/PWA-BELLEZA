@@ -315,6 +315,7 @@ alert(
 "Dirección actualizada 💖"
 );
 
+
 location.reload();
 
 };
@@ -428,8 +429,12 @@ abrirWhatsApp(
 `https://wa.me/${telefonoAdmin}?text=${mensaje}`
 );
 
-alert(
-"Cita cancelada correctamente 💔"
+/* CAMBIAR ESTADO */
+await updateDoc(
+doc(db,"citas",id),
+{
+estado:"cancelada"
+}
 );
 
 location.reload();
