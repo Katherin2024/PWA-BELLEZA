@@ -144,10 +144,62 @@ await getDocs(collection(db,"servicios"));
 
 let html = "";
 
+/* GUARDAR */
+let servicios = [];
+
 snap.forEach(docSnap=>{
 
-const s = docSnap.data();
-const id = docSnap.id;
+servicios.push({
+id: docSnap.id,
+...docSnap.data()
+});
+
+});
+
+/* ORDENAR CATEGORIAS */
+servicios.sort((a,b)=>
+a.categoria.localeCompare(b.categoria)
+);
+
+/* RECORRER */
+servicios.forEach((s,index)=>{
+
+const id = s.id;
+
+/* TITULO CATEGORIA */
+if(
+!html.includes(`grupo-${s.categoria}`)
+){
+
+const cantidad =
+servicios.filter(x =>
+x.categoria === s.categoria
+).length;
+
+html += `
+<div class="grupo-servicio">
+
+<div
+class="titulo-fecha-admin"
+onclick="toggleCategoria('${s.categoria}')">
+
+<span>
+ ${s.categoria.toUpperCase()}
+(${cantidad})
+</span>
+
+<span id="icono-${s.categoria}">
+▼
+</span>
+
+</div>
+
+<div
+id="grupo-${s.categoria}"
+class="contenedor-fecha">
+`;
+
+}
 
 html += `
 <div class="admin-card">
@@ -170,6 +222,22 @@ Eliminar ❌
 
 </div>
 `;
+
+/* CERRAR CATEGORIA */
+const siguiente =
+servicios[index + 1];
+
+if(
+!siguiente ||
+siguiente.categoria !== s.categoria
+){
+
+html += `
+</div>
+</div>
+`;
+
+}
 
 });
 
@@ -239,11 +307,35 @@ const usuariosSnap =
 await getDocs(collection(db,"usuarios"));
 
 let html = "";
+let citasOrdenadas = [];
 
+/* GUARDAR CITAS */
 citasSnap.forEach(docSnap=>{
 
-const c = docSnap.data();
-const id = docSnap.id;
+citasOrdenadas.push({
+id: docSnap.id,
+...docSnap.data()
+});
+
+});
+
+/* ORDENAR */
+citasOrdenadas.sort((a,b)=>{
+
+const fechaA =
+new Date(`${a.fecha}T${a.hora}`);
+
+const fechaB =
+new Date(`${b.fecha}T${b.hora}`);
+
+return fechaA - fechaB;
+
+});
+
+/* RECORRER */
+citasOrdenadas.forEach((c,index)=>{
+const id = c.id;
+    
 
 let nombreCliente = "Cliente";
 let telefonoCliente = "";
@@ -309,8 +401,44 @@ hFin + "" + mFin + "00";
 const linkCalendar =
 `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Cita%20Belleza&dates=${fechaBase}T${horaInicio}/${fechaBase}T${horaFin}&details=${encodeURIComponent(c.servicio)}&location=${encodeURIComponent(c.direccion)}`;
 
+/* TITULO FECHA */
+if(
+!html.includes(`grupo-${c.fecha}`)
+){
+
+const cantidad =
+citasOrdenadas.filter(x =>
+x.fecha === c.fecha
+).length;
+
+html += `
+<div class="grupo-fecha">
+
+<div
+class="titulo-fecha-admin"
+onclick="toggleFecha('${c.fecha}')">
+
+<span>
+📅 ${c.fecha}
+(${cantidad} citas)
+</span>
+
+<span id="icono-${c.fecha}">
+▼
+</span>
+
+</div>
+
+<div
+id="grupo-${c.fecha}"
+class="contenedor-fecha">
+`;
+
+}
+
 html += `
 <div class="admin-card">
+
 
 <h3>${c.servicio}</h3>
 
@@ -412,9 +540,24 @@ color:#6c5ce7;
 
 </div>
 `;
+/* CERRAR GRUPO */
+const siguiente =
+citasOrdenadas[index + 1];
+
+if(
+!siguiente ||
+siguiente.fecha !== c.fecha
+){
+
+html += `
+</div>
+</div>
+`;
+
+}
+
 
 });
-
 contenedor.innerHTML = html;
 
 }
@@ -525,6 +668,60 @@ estado:"atendida"
 );
 
 cargarCitas();
+
+};
+
+/* =========================================
+MOSTRAR / OCULTAR FECHAS CITAS
+========================================= */
+window.toggleFecha = (fecha)=>{
+
+const grupo =
+document.getElementById(`grupo-${fecha}`);
+
+const icono =
+document.getElementById(`icono-${fecha}`);
+
+if(grupo.style.display === "none"){
+
+grupo.style.display = "grid";
+
+icono.innerText = "▼";
+
+}else{
+
+grupo.style.display = "none";
+
+icono.innerText = "▶";
+
+}
+
+};
+
+/* =========================================
+MOSTRAR / OCULTAR CATEGORIAS
+========================================= */
+window.toggleCategoria = (categoria)=>{
+
+const grupo =
+document.getElementById(`grupo-${categoria}`);
+
+const icono =
+document.getElementById(`icono-${categoria}`);
+
+if(grupo.style.display === "none"){
+
+grupo.style.display = "grid";
+
+icono.innerText = "▼";
+
+}else{
+
+grupo.style.display = "none";
+
+icono.innerText = "▶";
+
+}
 
 };
 
@@ -1132,3 +1329,4 @@ data: dataIngresos
 });
 
 }
+
