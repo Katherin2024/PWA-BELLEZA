@@ -57,13 +57,13 @@ unit_price:Number(req.body.total)
 back_urls:{
 
 success:
-`https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?citaId=${req.body.citaId}`,
+`https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?estado=success&citaId=${req.body.citaId}`,
 
 failure:
-"https://katherin2024.github.io/PWA-BELLEZA/agendar.html",
+"https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?estado=failure",
 
 pending:
-"https://katherin2024.github.io/PWA-BELLEZA/agendar.html"
+"https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?estado=pending"
 
 },
 
