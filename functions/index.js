@@ -1,7 +1,10 @@
-const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
 
 const mercadopago = require("mercadopago");
 
+/* =========================================
+CONFIGURAR MERCADO PAGO
+========================================= */
 mercadopago.configure({
 
 access_token:
@@ -9,12 +12,38 @@ access_token:
 
 });
 
-exports.crearPreferencia =
-functions.https.onRequest(async(req,res)=>{
+/* =========================================
+CREAR PREFERENCIA
+========================================= */
+exports.crearPreferencia = onRequest(async(req,res)=>{
+
+/* =========================================
+CORS MANUAL
+========================================= */
+res.set("Access-Control-Allow-Origin", "*");
+
+res.set(
+"Access-Control-Allow-Methods",
+"GET, POST, OPTIONS"
+);
+
+res.set(
+"Access-Control-Allow-Headers",
+"Content-Type"
+);
+
+/* PREFLIGHT */
+if(req.method === "OPTIONS"){
+
+res.status(204).send("");
+return;
+
+}
 
 try{
 
-const preference = {
+const respuesta =
+await mercadopago.preferences.create({
 
 items:[
 {
@@ -28,7 +57,7 @@ unit_price:Number(req.body.total)
 back_urls:{
 
 success:
-"https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html",
+`https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?citaId=${req.body.citaId}`,
 
 failure:
 "https://katherin2024.github.io/PWA-BELLEZA/agendar.html",
@@ -40,12 +69,9 @@ pending:
 
 auto_return:"approved"
 
-};
+});
 
-const respuesta =
-await mercadopago.preferences.create(preference);
-
-res.json({
+res.status(200).json({
 id: respuesta.body.id
 });
 
@@ -53,7 +79,9 @@ id: respuesta.body.id
 
 console.log(error);
 
-res.status(500).send(error);
+res.status(500).json({
+error:error.message
+});
 
 }
 
