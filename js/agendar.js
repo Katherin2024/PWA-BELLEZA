@@ -462,14 +462,7 @@ total: anticipoGeneral
 
 const data = await respuesta.json();
 
-/* REDIRIGIR A MERCADO PAGO */
-window.location.href =
-`https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.id}`;
-
-
-
-
-
+/* GUARDAR CITA */
 await addDoc(collection(db,"citas"),{
 
 usuario: auth.currentUser.email,
@@ -490,16 +483,17 @@ valorTotal: totalGeneral,
 anticipo: anticipoGeneral,
 saldo: saldoGeneral,
 
-estadoPago:"pagado",
+estadoPago:"pendiente",
 estado:"pendiente"
 
 });
 
-alert(`Anticipo: $${anticipoGeneral.toLocaleString()}`);
-
-window.location.href = "mis-citas.html";
+/* REDIRIGIR A MERCADO PAGO */
+window.location.href =
+`https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.id}`;
 
 };
+
 
 /* =========================================
 BLOQUEO DÍAS + HORAS
