@@ -447,43 +447,26 @@ const finMin = inicioMin + duracionTotal + trayectoMin;
 /* =========================================
 MERCADO PAGO REAL
 ========================================= */
-const confirmarPago = confirm(
-`💳 Vas a pagar un anticipo de:
-
-$${anticipoGeneral.toLocaleString()}
-
-¿Continuar con Mercado Pago?`
-);
-
-if(!confirmarPago){
-return;
-}
-
-/* CREAR PREFERENCIA */
 const respuesta = await fetch(
-
 "https://crearpreferencia-ft72dtl6qq-uc.a.run.app",
-
 {
 method:"POST",
-
 headers:{
 "Content-Type":"application/json"
 },
-
 body: JSON.stringify({
 total: anticipoGeneral
 })
-
 }
-
 );
 
 const data = await respuesta.json();
 
-/* ABRIR CHECKOUT */
+/* REDIRIGIR A MERCADO PAGO */
 window.location.href =
 `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.id}`;
+
+
 
 
 
