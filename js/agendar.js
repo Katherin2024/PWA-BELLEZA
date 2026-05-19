@@ -26,6 +26,16 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 /* =========================================
+MERCADO PAGO
+========================================= */
+const mp = new MercadoPago(
+"APP_USR-9ef838d4-338e-4fa6-b124-8d22866c9d50",
+{
+locale:"es-CO"
+}
+);
+
+/* =========================================
 VARIABLES
 ========================================= */
 const horasBase = [
@@ -434,6 +444,49 @@ const [h,m] = hora.split(":");
 const inicioMin = Number(h)*60 + Number(m);
 const finMin = inicioMin + duracionTotal + trayectoMin;
 
+/* =========================================
+MERCADO PAGO REAL
+========================================= */
+const confirmarPago = confirm(
+`💳 Vas a pagar un anticipo de:
+
+$${anticipoGeneral.toLocaleString()}
+
+¿Continuar con Mercado Pago?`
+);
+
+if(!confirmarPago){
+return;
+}
+
+/* CREAR PREFERENCIA */
+const respuesta = await fetch(
+
+"https://crearpreferencia-ft72dtl6qq-uc.a.run.app",
+
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+total: anticipoGeneral
+})
+
+}
+
+);
+
+const data = await respuesta.json();
+
+/* ABRIR CHECKOUT */
+window.location.href =
+`https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.id}`;
+
+
+
 await addDoc(collection(db,"citas"),{
 
 usuario: auth.currentUser.email,
@@ -454,7 +507,7 @@ valorTotal: totalGeneral,
 anticipo: anticipoGeneral,
 saldo: saldoGeneral,
 
-estadoPago:"pendiente",
+estadoPago:"pagado",
 estado:"pendiente"
 
 });
