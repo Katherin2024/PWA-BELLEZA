@@ -460,7 +460,7 @@ anticipo: anticipoGeneral,
 saldo: saldoGeneral,
 
 estadoPago:"pagado",
-estado:"confirmada",
+estado:"pendiente",
 });
 
 /* =========================================
@@ -508,25 +508,16 @@ ${serviciosElegidos.map(s=>s.nombre).join(" + ")}
 ✅ Pago marcado como pagado`
 );
 
-/* TU NÚMERO */
-window.open(
-`https://wa.me/573227257705?text=${mensaje}`,
-"_blank"
-);
+
 
 /* =========================================
 MERCADO PAGO
 ========================================= */
 
-setTimeout(()=>{
-
 window.location.href =
 `https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=${data.id}`;
 
-},2000);
-
-
-};
+}
 
 
 /* =========================================
