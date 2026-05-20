@@ -57,7 +57,7 @@ unit_price:Number(req.body.total)
 back_urls:{
 
 success:
-`https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?estado=success&citaId=${req.body.citaId}`,
+"https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?estado=success",
 
 failure:
 "https://katherin2024.github.io/PWA-BELLEZA/mis-citas.html?estado=failure",
@@ -67,7 +67,9 @@ pending:
 
 },
 
-auto_return:"approved"
+notification_url:
+"https://google.com",
+auto_return:"all"
 
 });
 

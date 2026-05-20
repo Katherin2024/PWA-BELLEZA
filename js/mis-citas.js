@@ -30,9 +30,6 @@ getFirestore(app);
 const auth =
 getAuth(app);
 
-
-
-
 /* =========================================
 CARGAR CITAS
 ========================================= */
@@ -63,9 +60,8 @@ docSnap.id;
 if(cita.usuario === user.email){
 
 const activa =
-cita.estado !== "cancelada" &&
-cita.estado !== "rechazado" &&
-cita.estado !== "atendida";
+cita.estado === "pendiente" ||
+cita.estado === "aprobado";
 
 const card = `
 <div class="mis-cita-card">
@@ -187,7 +183,7 @@ boton.innerText =
 /* =========================================
 VALIDAR LOGIN
 ========================================= */
-onAuthStateChanged(auth, async(user)=>{
+onAuthStateChanged(auth,(user)=>{
 
 if(!user){
 
@@ -198,67 +194,9 @@ return;
 
 }
 
-/* cargar citas primero */
-await cargarCitas(user);
-
-/* =========================================
-RETORNO MERCADO PAGO
-========================================= */
-
-const params =
-new URLSearchParams(window.location.search);
-
-const estado =
-params.get("estado");
-
-/* SOLO SI VIENE DE MP */
-if(estado === "success"){
-
-const mensaje =
-encodeURIComponent(
-`💖 NUEVA CITA
-
-👤 Cliente: ${user.email}
-
-✅ Pago recibido`
-);
-
-const telefonoAdmin =
-"573227257705";
-
-setTimeout(()=>{
-
-const link =
-`https://wa.me/${telefonoAdmin}?text=${mensaje}`;
-
-const esMovil =
-/Android|iPhone|iPad|iPod/i.test(
-navigator.userAgent
-);
-
-if(esMovil){
-
-window.location.href = link;
-
-}else{
-
-window.open(link,"_blank");
-
-}
-
-/* limpiar url */
-window.history.replaceState(
-{},
-document.title,
-window.location.pathname
-);
-
-},2500);
-
-}
+cargarCitas(user);
 
 });
-
 
 /* =========================================
 CAMBIAR DIRECCIÓN
